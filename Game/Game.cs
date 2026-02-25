@@ -28,7 +28,7 @@ namespace PokemonSweeper.Game
         public int Score { get; set; }
         public List<Pokemon.Pokemon> Pokemon { get; set; }
         public int Level { get; set; }
-        public Field Field { get; set; }
+        public PokemonSweeper.Field Field { get; set; }
         // Calculate the score gained after finishing a field.
         public int CalculateNewScore(Stopwatch timer, int clicks, List<Pokemon.Pokemon> pokemon)
         {
@@ -52,7 +52,7 @@ namespace PokemonSweeper.Game
             window.MineFieldGrid.Columns = FieldLevels[Level].Columns;
             window.Width = 600*FieldLevels[Level].Columns/FieldLevels[Level].Rows;
             window.MineFieldGrid.Width = 500*FieldLevels[Level].Columns/FieldLevels[Level].Rows;
-            Field = new Field(FieldLevels[Level].Rows, FieldLevels[Level].Columns,
+            Field = new PokemonSweeper.Field(FieldLevels[Level].Rows, FieldLevels[Level].Columns,
                 FieldLevels[Level].Pokemon,
                 FieldLevels[Level].Open, window);
 

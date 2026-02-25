@@ -14,7 +14,7 @@ namespace PokemonSweeper.Game.Messages
             InitializeComponent();
         }
 
-        public static void ShowScore(GameWindow sender, Field Field)
+        public static void ShowScore(GameWindow sender, PokemonSweeper.Field Field)
         {
             Field.Timer.Stop();
             var PokeList = new List<Pokemon.Pokemon>();
