@@ -31,7 +31,7 @@ namespace PokemonSweeper
 
         public void MinesLeftLabel(int count)
         {
-            MinesLeft.Content = "Pokebals: " + count;
+            MinesLeft.Content = "Pokeballs: " + count;
         }
     }
 }

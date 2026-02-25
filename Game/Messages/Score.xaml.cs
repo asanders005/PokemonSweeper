@@ -26,7 +26,7 @@ namespace PokemonSweeper.Game.Messages
                 PokeList.Add(square.Pokemon);
             }
             var newScore = sender.Game.CalculateNewScore(Field.Timer, Field.NrOfClicks, PokeList);
-            Winner.score.Text = "Goed zo! Je hebt alle Pokemon gevangen!! uw score is " + newScore;
+            Winner.score.Text = "Good job! You caught all the Pokemon!! Your score is " + newScore;
             Winner.Owner = sender;
             Winner.ShowDialog();
         }
