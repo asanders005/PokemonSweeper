@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using PokemonSweeper;
+using PokemonSweeper.Game.Field.Game.Pokemon;
 
 namespace PokemonSweeper.Game
 {
@@ -11,7 +12,7 @@ namespace PokemonSweeper.Game
         {
             Level = 0;
             Score = 0;
-            Pokemon = new List<Pokemon.Pokemon>(); // make empty list of Pokemon captured
+            Pokemon = new List<Pokemon>(); // make empty list of Pokemon captured
 
             FieldLevels = new List<FieldLevel>(); // Make list of Game Levels
             // ------------------------
@@ -26,11 +27,11 @@ namespace PokemonSweeper.Game
 
         public List<FieldLevel> FieldLevels { get; set; }
         public int Score { get; set; }
-        public List<Pokemon.Pokemon> Pokemon { get; set; }
+        public List<Pokemon> Pokemon { get; set; }
         public int Level { get; set; }
         public PokemonSweeper.Field Field { get; set; }
         // Calculate the score gained after finishing a field.
-        public int CalculateNewScore(Stopwatch timer, int clicks, List<Pokemon.Pokemon> pokemon)
+        public int CalculateNewScore(Stopwatch timer, int clicks, List<Pokemon> pokemon)
         {
             // count the number of new (never before) catched pokemon.
             var newPokemon = 0;

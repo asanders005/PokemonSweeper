@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using PokemonSweeper.Game.Field.Game.Pokemon;
+using System.Windows;
 
 namespace PokemonSweeper.Game.Messages
 {
@@ -12,7 +13,7 @@ namespace PokemonSweeper.Game.Messages
             InitializeComponent();
         }
 
-        public static void ShowMessage(GameWindow window, Pokemon.Pokemon pokemon)
+        public static void ShowMessage(GameWindow window, Pokemon pokemon)
         {
             var Fail = new FailMessage();
             Fail.EscapedPokemon.Source = pokemon.Picture;

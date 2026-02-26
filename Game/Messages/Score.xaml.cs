@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PokemonSweeper.Game.Field.Game.Pokemon;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
@@ -17,7 +18,7 @@ namespace PokemonSweeper.Game.Messages
         public static void ShowScore(GameWindow sender, PokemonSweeper.Field Field)
         {
             Field.Timer.Stop();
-            var PokeList = new List<Pokemon.Pokemon>();
+            var PokeList = new List<Pokemon>();
             var Winner = new Score();
 
             foreach (var square in Field.Squares.Where(s => s.Pokemon != null))
