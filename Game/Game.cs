@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using PokemonSweeper;
-using PokemonSweeper.Game.Field.Game.Pokemon;
+using PokemonSweeper.Game;
 
 namespace PokemonSweeper.Game
 {

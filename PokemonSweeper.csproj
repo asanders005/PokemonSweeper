@@ -2,12 +2,15 @@
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>PokemonSweeper.Game.Field</RootNamespace>
-    <AssemblyName>MineSweeper1</AssemblyName>
+    <RootNamespace>PokemonSweeper</RootNamespace>
+    <AssemblyName>PokemonSweeper</AssemblyName>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <UserSecretsId>63375626-de12-4f3b-8fb0-c32b9cf89412</UserSecretsId>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="images\pokeball.png" />
+  </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
@@ -15,5 +18,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
     <PackageReference Include="MongoDB.Driver" Version="3.6.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\pokeball.png" />
   </ItemGroup>
 </Project>

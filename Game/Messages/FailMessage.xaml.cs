@@ -1,4 +1,4 @@
-﻿using PokemonSweeper.Game.Field.Game.Pokemon;
+﻿using PokemonSweeper.Game;
 using System.Windows;
 
 namespace PokemonSweeper.Game.Messages
@@ -16,8 +16,8 @@ namespace PokemonSweeper.Game.Messages
         public static void ShowMessage(GameWindow window, Pokemon pokemon)
         {
             var Fail = new FailMessage();
-            Fail.EscapedPokemon.Source = pokemon.Picture;
-            Fail.Message.Text = pokemon.Number + " - " + pokemon.Name + " managed to escape!";
+            //Fail.EscapedPokemon.Source = pokemon.Picture;
+            Fail.Message.Text = pokemon.DexNum + " - " + pokemon.Name + " managed to escape!";
             Fail.Title = "Game over!";
             Fail.Owner = window;
             Fail.ShowDialog();

@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 using PokemonSweeper.Game.Messages;
 using System.Windows.Documents;
 using System.Collections.Generic;
-using PokemonSweeper.Game.Field.Game.Pokemon;
+using PokemonSweeper.Game;
 
 namespace PokemonSweeper
 {
@@ -69,7 +69,7 @@ namespace PokemonSweeper
             if (Status == SquareStatus.Open)
             {
                 Status = SquareStatus.Flagged;
-                Content = new Image {Source = new BitmapImage(new Uri(@"/Game/images/pokeball.png", UriKind.Relative))};
+                Content = new Image {Source = new BitmapImage(new Uri("pack://application:,,,/images/pokeball.png"))};
                 FlaggedSquares = Field.Squares.Where( square => square.Status == SquareStatus.Flagged ).ToList();
                 sender.MinesLeftLabel( sender.Game.FieldLevels[sender.Game.Level].Pokemon - FlaggedSquares.Count() );
                 if (FlaggedSquares.Count() == sender.Game.FieldLevels[sender.Game.Level].Pokemon)
@@ -119,7 +119,7 @@ namespace PokemonSweeper
             Field.NrOfClicks++;
             if (Pokemon != null)
             {
-                Content = new Image {Source = Pokemon.Picture};
+                //Content = new Image {Source = Pokemon.Picture};
                 Status = SquareStatus.Pokemon;
                 Background = Brushes.Red;
                 BorderBrush = Brushes.Red;

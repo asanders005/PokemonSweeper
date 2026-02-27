@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using PokemonSweeper.Game.Field.API;
+using PokemonSweeper.Data;
 
 namespace PokemonSweeper
 {
@@ -24,17 +24,20 @@ namespace PokemonSweeper
             // Register configuration
             services.AddSingleton<IConfiguration>(configuration);
 
-            // Register MongoDB client and database
+            // Register MongoDB only if a connection string is provided 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            services.AddSingleton<IMongoClient>(new MongoClient(connectionString));
-            services.AddSingleton(sp =>
+            if (!string.IsNullOrEmpty(connectionString))
             {
-                var client = sp.GetRequiredService<IMongoClient>();
-                return client.GetDatabase("Pokemon");
-            });
+                services.AddSingleton<IMongoClient>(new MongoClient(connectionString));
+                services.AddSingleton<IMongoDatabase>(sp =>
+                {
+                    var client = sp.GetRequiredService<IMongoClient>();
+                    return client.GetDatabase("Pokemon");
+                });
+            }
 
             // Register application services
-            services.AddSingleton<PokeApiService>();
+            services.AddSingleton<DAL>();
             services.AddTransient<GameWindow>();
 
             ServiceProvider = services.BuildServiceProvider();

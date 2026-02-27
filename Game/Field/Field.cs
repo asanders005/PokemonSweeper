@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using PokemonSweeper.Game.Pokemon;
+using PokemonSweeper.Game;
 
 namespace PokemonSweeper
 {
@@ -53,10 +53,7 @@ namespace PokemonSweeper
                     Squares.Add(new Square(this, Rows, Columns, row, column));
                     if (pokemonPlacers.Contains(Squares.Count - 1))
                     {
-                        Squares[Squares.Count - 1].Pokemon = new Pokemon
-                        {
-                            Type = (PokemonList) Random.Next(1, 386)
-                        };
+                        Squares[Squares.Count - 1].Pokemon = new Pokemon();
                     }
                 }
             }
