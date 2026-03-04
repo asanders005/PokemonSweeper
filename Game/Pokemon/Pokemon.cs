@@ -209,7 +209,7 @@ namespace PokemonSweeper.Game
                     pokemon.Stats[statType] = new PokemonStat
                     {
                         StatType = statType,
-                        BaseValue = stat.Value["base_value"].AsInt32,
+                        BaseValue = pokemon.Pokemon.BaseStats[statType],
                         IV = stat.Value["iv"].AsInt32,
                         EV = stat.Value["ev"].AsInt32,
                         NatureType = (PokemonNatureType)Enum.Parse(typeof(PokemonNatureType), stat.Value["nature_type"].AsString)
@@ -226,7 +226,6 @@ namespace PokemonSweeper.Game
             {
                 statsDoc[stat.Key.ToString()] = new BsonDocument
                 {
-                    { "base_value", stat.Value.BaseValue },
                     { "iv", stat.Value.IV },
                     { "ev", stat.Value.EV },
                     { "nature_type", stat.Value.NatureType.ToString() }
