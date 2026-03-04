@@ -16,7 +16,7 @@ namespace PokemonSweeper
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             var configuration = new ConfigurationBuilder()
-                .AddUserSecrets<App>()
+                .AddUserSecrets<App>(optional: true)
                 .Build();
 
             var services = new ServiceCollection();
