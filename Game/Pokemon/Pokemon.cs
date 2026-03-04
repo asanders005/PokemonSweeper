@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using PokemonSweeper.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,25 @@ namespace PokemonSweeper.Game
         Fairy
     }
 
+    public enum PokemonStatsType
+    {
+        HP,
+        Attack,
+        Defense,
+        SpecialAttack,
+        SpecialDefense,
+        Speed
+    }
+
+    public enum PokemonNatureType
+    {
+        Beneficial,
+        Neutral,
+        Hindering
+    }
+
+   
+
     public class Pokemon
     {
         public int DexNum { get; set; }
@@ -35,17 +55,17 @@ namespace PokemonSweeper.Game
         public string Name { get; set; } = "";
         public string DefaultSprite { get; set; } = "";
         public string ShinySprite { get; set; } = "";
-        public bool IsShiny { get; set; } = false;
 
         public PokemonType PrimaryType { get; set; }
         public PokemonType? SecondaryType { get; set; } = null;
-        public Dictionary<PokemonStatsType, PokemonStat> Stats { get; set; }
+        public Dictionary<PokemonStatsType, int> BaseStats { get; set; }
         public Dictionary<PokemonStatsType, int> EvYield { get; set; }
 
         public static Pokemon CreateFromBson(BsonDocument bsonDoc)
         {
             var types = bsonDoc["types"].AsBsonArray;
             var stats = bsonDoc["stats"].AsBsonDocument;
+            var evYield = bsonDoc["ev_yield"].AsBsonDocument;
 
             return new Pokemon
             {
@@ -55,20 +75,78 @@ namespace PokemonSweeper.Game
                 ShinySprite = bsonDoc["sprites"]["shiny"].AsString,
                 PrimaryType = (PokemonType)Enum.Parse(typeof(PokemonType), types[0].AsString),
                 SecondaryType = (types.Count > 1 && !string.IsNullOrWhiteSpace(types[1].AsString)) ? (PokemonType?)Enum.Parse(typeof(PokemonType), types[1].AsString) : null,
-                Stats = new Dictionary<PokemonStatsType, PokemonStat>
-                {   { PokemonStatsType.HP, new PokemonStat { StatType = PokemonStatsType.HP, BaseValue = stats["HP"].AsInt32 } },
-                    { PokemonStatsType.Attack, new PokemonStat { StatType = PokemonStatsType.Attack, BaseValue = stats["Attack"].AsInt32 } },
-                    { PokemonStatsType.Defense, new PokemonStat { StatType = PokemonStatsType.Defense, BaseValue = stats["Defense"].AsInt32 } },
-                    { PokemonStatsType.SpecialAttack, new PokemonStat { StatType = PokemonStatsType.SpecialAttack, BaseValue = stats["SpecialAttack"].AsInt32 } },
-                    { PokemonStatsType.SpecialDefense, new PokemonStat { StatType = PokemonStatsType.SpecialDefense, BaseValue = stats["SpecialDefense"].AsInt32 } },
-                    { PokemonStatsType.Speed, new PokemonStat { StatType = PokemonStatsType.Speed, BaseValue = stats["Speed"].AsInt32 } }
+                BaseStats = new Dictionary<PokemonStatsType, int>
+                {   { PokemonStatsType.HP, stats["HP"].AsInt32 },
+                    { PokemonStatsType.Attack, stats["Attack"].AsInt32 },
+                    { PokemonStatsType.Defense, stats["Defense"].AsInt32 },
+                    { PokemonStatsType.SpecialAttack, stats["SpecialAttack"].AsInt32 },
+                    { PokemonStatsType.SpecialDefense, stats["SpecialDefense"].AsInt32 },
+                    { PokemonStatsType.Speed, stats["Speed"].AsInt32 }
+                },
+                EvYield = new Dictionary<PokemonStatsType, int>
+                {
+                    { PokemonStatsType.HP, evYield["HP"].AsInt32 },
+                    { PokemonStatsType.Attack, evYield["Attack"].AsInt32 },
+                    { PokemonStatsType.Defense, evYield["Defense"].AsInt32 },
+                    { PokemonStatsType.SpecialAttack, evYield["SpecialAttack"].AsInt32 },
+                    { PokemonStatsType.SpecialDefense, evYield["SpecialDefense"].AsInt32 },
+                    { PokemonStatsType.Speed, evYield["Speed"].AsInt32 }
                 }
             };
         }
 
-        public static Pokemon CreateWithRandomStats(BsonDocument bsonDoc)
+        public BsonDocument ToBson()
         {
-            var pokemon = CreateFromBson(bsonDoc);
+            return new BsonDocument
+            {
+                { "dex_num", DexNum },
+                { "name", Name },
+                { "sprites", new BsonDocument
+                    {
+                        { "default", DefaultSprite },
+                        { "shiny", ShinySprite }
+                    }
+                },
+                { "types", new BsonArray
+                    {
+                        PrimaryType.ToString(),
+                        SecondaryType?.ToString() ?? null
+                    }
+                },
+                { "stats", new BsonDocument
+                    {
+                        { "HP", BaseStats[PokemonStatsType.HP] },
+                        { "Attack", BaseStats[PokemonStatsType.Attack] },
+                        { "Defense", BaseStats[PokemonStatsType.Defense] },
+                        { "SpecialAttack", BaseStats[PokemonStatsType.SpecialAttack] },
+                        { "SpecialDefense", BaseStats[PokemonStatsType.SpecialDefense] },
+                        { "Speed", BaseStats[PokemonStatsType.Speed] }
+                    }
+                },
+                { "ev_yield", new BsonDocument
+                    {
+                        { "HP", EvYield[PokemonStatsType.HP] },
+                        { "Attack", EvYield[PokemonStatsType.Attack] },
+                        { "Defense", EvYield[PokemonStatsType.Defense] },
+                        { "SpecialAttack", EvYield[PokemonStatsType.SpecialAttack] },
+                        { "SpecialDefense", EvYield[PokemonStatsType.SpecialDefense] },
+                        { "Speed", EvYield[PokemonStatsType.Speed] }
+                    }
+                }
+            };
+        }
+    }
+
+    public class PlayerPokemon
+    {
+        public Pokemon Pokemon { get; set; }
+        public int Level { get; set; }
+        public bool IsShiny { get; set; }
+        public Dictionary<PokemonStatsType, PokemonStat> Stats { get; set; }
+
+        public static PlayerPokemon CreateWithRandomStats(BsonDocument bsonDoc)
+        {
+            var pokemon = new PlayerPokemon() { Pokemon = Pokemon.CreateFromBson(bsonDoc) };
             var random = new Random();
 
             pokemon.IsShiny = random.NextDouble() < 0.00024;
@@ -92,53 +170,76 @@ namespace PokemonSweeper.Game
             return pokemon;
         }
 
+        public void GenerateRandomStats()
+        {
+            var random = new Random();
+
+            IsShiny = random.NextDouble() < 0.00024;
+            int posNatureStat = random.Next(0, 6);
+            int negNatureStat = random.Next(0, 6);
+            int statIndex = 0;
+
+            foreach (var stat in Stats.Values)
+            {
+                stat.IV = random.Next(0, 32);
+
+                stat.NatureType = (statIndex == posNatureStat && posNatureStat == negNatureStat) ? PokemonNatureType.Neutral :
+                                  (statIndex == posNatureStat) ? PokemonNatureType.Beneficial :
+                                  (statIndex == negNatureStat) ? PokemonNatureType.Hindering :
+                                  PokemonNatureType.Neutral;
+
+                statIndex++;
+            }
+        }
+
+        public static PlayerPokemon CreateFromBson(BsonDocument bsonDoc, DAL dal)
+        {
+            var pokemon = new PlayerPokemon
+            {
+                Pokemon = dal.GetPokemonByDexNumAsync(bsonDoc["dex_num"].AsInt32).Result,
+                Level = bsonDoc["level"].AsInt32,
+                IsShiny = bsonDoc["is_shiny"].AsBoolean,
+                Stats = new Dictionary<PokemonStatsType, PokemonStat>()
+            };
+            var statsDoc = bsonDoc["stats"].AsBsonDocument;
+            foreach (var stat in statsDoc.Elements)
+            {
+                if (Enum.TryParse(stat.Name, out PokemonStatsType statType))
+                {
+                    pokemon.Stats[statType] = new PokemonStat
+                    {
+                        StatType = statType,
+                        BaseValue = stat.Value["base_value"].AsInt32,
+                        IV = stat.Value["iv"].AsInt32,
+                        EV = stat.Value["ev"].AsInt32,
+                        NatureType = (PokemonNatureType)Enum.Parse(typeof(PokemonNatureType), stat.Value["nature_type"].AsString)
+                    };
+                }
+            }
+            return pokemon;
+        }
+
         public BsonDocument ToBson()
         {
+            var statsDoc = new BsonDocument();
+            foreach (var stat in Stats)
+            {
+                statsDoc[stat.Key.ToString()] = new BsonDocument
+                {
+                    { "base_value", stat.Value.BaseValue },
+                    { "iv", stat.Value.IV },
+                    { "ev", stat.Value.EV },
+                    { "nature_type", stat.Value.NatureType.ToString() }
+                };
+            }
             return new BsonDocument
             {
-                { "dex_num", DexNum },
-                { "name", Name },
-                { "sprites", new BsonDocument
-                    {
-                        { "default", DefaultSprite },
-                        { "shiny", ShinySprite }
-                    }
-                },
-                { "types", new BsonArray
-                    {
-                        PrimaryType.ToString(),
-                        SecondaryType?.ToString() ?? null
-                    }
-                },
-                { "stats", new BsonDocument
-                    {
-                        { "HP", Stats[PokemonStatsType.HP].BaseValue },
-                        { "Attack", Stats[PokemonStatsType.Attack].BaseValue },
-                        { "Defense", Stats[PokemonStatsType.Defense].BaseValue },
-                        { "SpecialAttack", Stats[PokemonStatsType.SpecialAttack].BaseValue },
-                        { "SpecialDefense", Stats[PokemonStatsType.SpecialDefense].BaseValue },
-                        { "Speed", Stats[PokemonStatsType.Speed].BaseValue }
-                    }
-                }
+                { "dex_num", Pokemon.DexNum },
+                { "level", Level },
+                { "is_shiny", IsShiny },
+                { "stats", statsDoc }
             };
         }
-    }
-
-    public enum PokemonStatsType
-    {
-        HP,
-        Attack,
-        Defense,
-        SpecialAttack,
-        SpecialDefense,
-        Speed
-    }
-
-    public enum PokemonNatureType
-    {
-        Beneficial,
-        Neutral,
-        Hindering
     }
 
     public class PokemonStat

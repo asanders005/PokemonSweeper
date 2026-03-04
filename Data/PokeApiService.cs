@@ -64,6 +64,15 @@ namespace PokemonSweeper.API
                     { PokemonStatsType.SpecialDefense, new PokemonStat { StatType = PokemonStatsType.SpecialDefense, BaseValue = stats["SpecialDefense"].AsInt32 } },
                     { PokemonStatsType.Speed, new PokemonStat { StatType = PokemonStatsType.Speed, BaseValue = stats["Speed"].AsInt32 } }
                 },
+                EvYield = new Dictionary<PokemonStatsType, int>
+                {
+                    { PokemonStatsType.HP, stats["HP"]["effort"].AsInt32 },
+                    { PokemonStatsType.Attack, stats["Attack"]["effort"].AsInt32 },
+                    { PokemonStatsType.Defense, stats["Defense"]["effort"].AsInt32 },
+                    { PokemonStatsType.SpecialAttack, stats["SpecialAttack"]["effort"].AsInt32 },
+                    { PokemonStatsType.SpecialDefense, stats["SpecialDefense"]["effort"].AsInt32 },
+                    { PokemonStatsType.Speed, stats["Speed"]["effort"].AsInt32 }
+                },
                 PrimaryType = (PokemonType)Enum.Parse(typeof(PokemonType), types[0]["type"]["name"].AsString, true),
                 SecondaryType = types.Count > 1 ? (PokemonType?)Enum.Parse(typeof(PokemonType), types[1]["type"]["name"].AsString, true) : null
             };
