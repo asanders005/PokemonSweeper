@@ -3,6 +3,7 @@ using PokemonSweeper.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
 namespace PokemonSweeper.Game
@@ -110,7 +111,7 @@ namespace PokemonSweeper.Game
                 { "types", new BsonArray
                     {
                         PrimaryType.ToString(),
-                        SecondaryType?.ToString() ?? null
+                        SecondaryType?.ToString() ?? ""
                     }
                 },
                 { "stats", new BsonDocument
@@ -144,10 +145,29 @@ namespace PokemonSweeper.Game
         public bool IsShiny { get; set; }
         public Dictionary<PokemonStatsType, PokemonStat> Stats { get; set; }
 
-        public static PlayerPokemon CreateWithRandomStats(BsonDocument bsonDoc)
+        public static async Task<PlayerPokemon> CreateWithRandomStats(DAL dal, int level = 0, int levelMargin = 10)
         {
-            var pokemon = new PlayerPokemon() { Pokemon = Pokemon.CreateFromBson(bsonDoc) };
             var random = new Random();
+            var randomDexNum = random.Next(1, 1029); // Assuming there are 1028 Pokemon in the database
+
+            var pokemonBase = await dal.GetPokemonByDexNumAsync(randomDexNum);
+
+            var pokemon = new PlayerPokemon() 
+            { 
+                Pokemon = pokemonBase, 
+                Level = level > 0 ? Math.Clamp(random.Next(level - levelMargin, level + levelMargin), 1, 100)
+                    : random.Next(1, 101), // Random level between 1 and 100 if not specified
+                Stats = new Dictionary<PokemonStatsType, PokemonStat>()
+                {
+                    { PokemonStatsType.HP, new PokemonStat { StatType = PokemonStatsType.HP, BaseValue = pokemonBase.BaseStats[PokemonStatsType.HP] } },
+                    { PokemonStatsType.Attack, new PokemonStat { StatType = PokemonStatsType.Attack, BaseValue = pokemonBase.BaseStats[PokemonStatsType.Attack] } },
+                    { PokemonStatsType.Defense, new PokemonStat { StatType = PokemonStatsType.Defense, BaseValue = pokemonBase.BaseStats[PokemonStatsType.Defense] } },
+                    { PokemonStatsType.SpecialAttack, new PokemonStat { StatType = PokemonStatsType.SpecialAttack, BaseValue = pokemonBase.BaseStats[PokemonStatsType.SpecialAttack] } },
+                    { PokemonStatsType.SpecialDefense, new PokemonStat { StatType = PokemonStatsType.SpecialDefense, BaseValue = pokemonBase.BaseStats[PokemonStatsType.SpecialDefense] } },
+                    { PokemonStatsType.Speed, new PokemonStat { StatType = PokemonStatsType.Speed, BaseValue = pokemonBase.BaseStats[PokemonStatsType.Speed] } }
+                }
+            };
+
 
             pokemon.IsShiny = random.NextDouble() < 0.00024;
             int posNatureStat = random.Next(0, 6);

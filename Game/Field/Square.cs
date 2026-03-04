@@ -45,7 +45,7 @@ namespace PokemonSweeper
         }
 
         public Field Field { get; set; }
-        public Pokemon Pokemon { get; set; }
+        public PlayerPokemon Pokemon { get; set; }
 
         public int Mines
         {

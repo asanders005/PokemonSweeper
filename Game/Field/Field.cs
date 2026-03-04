@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
+using PokemonSweeper.Data;
 using PokemonSweeper.Game;
 
 namespace PokemonSweeper
@@ -9,15 +11,23 @@ namespace PokemonSweeper
     public class Field
     {
         private readonly Random Random = new Random();
+        private readonly DAL _dal;
         public Stopwatch Timer;
 
-        public Field(int rows, int columns, int nrOfPokemon, int openSquares, GameWindow window)
+        private Field(int rows, int columns, DAL dal)
         {
             Rows = rows;
+            _dal = dal;
             Columns = columns;
-            PopulateField(nrOfPokemon, openSquares, window);
-            Timer = Stopwatch.StartNew();
             NrOfClicks = 0;
+        }
+
+        public static async Task<Field> CreateAsync(int rows, int columns, int nrOfPokemon, int openSquares, GameWindow window, DAL dal)
+        {
+            var field = new Field(rows, columns, dal);
+            await field.PopulateField(nrOfPokemon, openSquares, window);
+            field.Timer = Stopwatch.StartNew();
+            return field;
         }
 
         public int Columns { get; set; }
@@ -31,7 +41,7 @@ namespace PokemonSweeper
 
         public int NrOfClicks { get; set; }
 
-        private void PopulateField(int nrOfPokemon, int openSquares, GameWindow window)
+        private async Task PopulateField(int nrOfPokemon, int openSquares, GameWindow window)
         {
             var pokemonPlacers = new List<int>();
 
@@ -53,7 +63,7 @@ namespace PokemonSweeper
                     Squares.Add(new Square(this, Rows, Columns, row, column));
                     if (pokemonPlacers.Contains(Squares.Count - 1))
                     {
-                        Squares[Squares.Count - 1].Pokemon = new Pokemon();
+                        Squares[Squares.Count - 1].Pokemon = await PlayerPokemon.CreateWithRandomStats(_dal);
                     }
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using PokemonSweeper;
 using PokemonSweeper.Data;
 using PokemonSweeper.Game;
@@ -14,7 +15,7 @@ namespace PokemonSweeper.Game
             _dal = dal;
             Level = 0;
             Score = 0;
-            Pokemon = new List<Pokemon>(); // make empty list of Pokemon captured
+            Pokemon = new List<PlayerPokemon>(); // make empty list of Pokemon captured
 
             FieldLevels = new List<FieldLevel>(); // Make list of Game Levels
             // ------------------------
@@ -29,11 +30,11 @@ namespace PokemonSweeper.Game
 
         public List<FieldLevel> FieldLevels { get; set; }
         public int Score { get; set; }
-        public List<Pokemon> Pokemon { get; set; }
+        public List<PlayerPokemon> Pokemon { get; set; }
         public int Level { get; set; }
         public PokemonSweeper.Field Field { get; set; }
         // Calculate the score gained after finishing a field.
-        public int CalculateNewScore(Stopwatch timer, int clicks, List<Pokemon> pokemon)
+        public int CalculateNewScore(Stopwatch timer, int clicks, List<PlayerPokemon> pokemon)
         {
             // count the number of new (never before) catched pokemon.
             var newPokemon = 0;
@@ -46,7 +47,7 @@ namespace PokemonSweeper.Game
             return newScore;
         }
 
-        public void NewField(GameWindow window)
+        public async Task NewField(GameWindow window)
         {
             window.MineFieldGrid.Children.Clear();
 
@@ -55,9 +56,12 @@ namespace PokemonSweeper.Game
             window.MineFieldGrid.Columns = FieldLevels[Level].Columns;
             window.Width = 600*FieldLevels[Level].Columns/FieldLevels[Level].Rows;
             window.MineFieldGrid.Width = 500*FieldLevels[Level].Columns/FieldLevels[Level].Rows;
-            Field = new PokemonSweeper.Field(FieldLevels[Level].Rows, FieldLevels[Level].Columns,
+            Field = await PokemonSweeper.Field.CreateAsync(
+                FieldLevels[Level].Rows, 
+                FieldLevels[Level].Columns,
                 FieldLevels[Level].Pokemon,
-                FieldLevels[Level].Open, window);
+                FieldLevels[Level].Open, window, 
+                _dal);
 
             foreach (var square in Field.Squares)
             {

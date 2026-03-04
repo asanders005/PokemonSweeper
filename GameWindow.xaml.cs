@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using PokemonSweeper.Data;
 using PokemonSweeper.Game;
@@ -16,9 +17,9 @@ namespace PokemonSweeper
 
         public PokeSweepGame Game { get; set; }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Game.NewField(this);
+            await Game.NewField(this);
         }
 
         public void MineSquare_MouseRightButtonDown(object sender, MouseButtonEventArgs e)

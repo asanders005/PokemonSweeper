@@ -18,7 +18,7 @@ namespace PokemonSweeper.Game.Messages
         public static void ShowScore(GameWindow sender, PokemonSweeper.Field Field)
         {
             Field.Timer.Stop();
-            var PokeList = new List<Pokemon>();
+            var PokeList = new List<PlayerPokemon>();
             var Winner = new Score();
 
             foreach (var square in Field.Squares.Where(s => s.Pokemon != null))
@@ -32,10 +32,10 @@ namespace PokemonSweeper.Game.Messages
             Winner.ShowDialog();
         }
 
-        private void Next_Click(object sender, RoutedEventArgs e)
+        private async void Next_Click(object sender, RoutedEventArgs e)
         {
             var OwnerWindow = ((GameWindow) Owner);
-            OwnerWindow.Game.NewField(OwnerWindow);
+            await OwnerWindow.Game.NewField(OwnerWindow);
             Close();
         }
     }

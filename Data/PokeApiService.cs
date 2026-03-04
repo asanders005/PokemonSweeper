@@ -46,7 +46,7 @@ namespace PokemonSweeper.API
             var pokemonData = BsonDocument.Parse(content);
 
             var sprites = pokemonData["sprites"];
-            var stats = pokemonData["stats"].AsBsonDocument;
+            var stats = pokemonData["stats"].AsBsonArray;
             var types = pokemonData["types"].AsBsonArray;
 
             return new Pokemon
@@ -55,23 +55,23 @@ namespace PokemonSweeper.API
                 Name = pokemonData["name"].AsString,
                 DefaultSprite = sprites["front_default"].AsString,
                 ShinySprite = sprites["front_shiny"].AsString,
-                Stats = new Dictionary<PokemonStatsType, PokemonStat>
+                BaseStats = new Dictionary<PokemonStatsType, int>
                 {
-                    { PokemonStatsType.HP, new PokemonStat { StatType = PokemonStatsType.HP, BaseValue = stats["HP"].AsInt32 } },
-                    { PokemonStatsType.Attack, new PokemonStat { StatType = PokemonStatsType.Attack, BaseValue = stats["Attack"].AsInt32 } },
-                    { PokemonStatsType.Defense, new PokemonStat { StatType = PokemonStatsType.Defense, BaseValue = stats["Defense"].AsInt32 } },
-                    { PokemonStatsType.SpecialAttack, new PokemonStat { StatType = PokemonStatsType.SpecialAttack, BaseValue = stats["SpecialAttack"].AsInt32 } },
-                    { PokemonStatsType.SpecialDefense, new PokemonStat { StatType = PokemonStatsType.SpecialDefense, BaseValue = stats["SpecialDefense"].AsInt32 } },
-                    { PokemonStatsType.Speed, new PokemonStat { StatType = PokemonStatsType.Speed, BaseValue = stats["Speed"].AsInt32 } }
+                    { PokemonStatsType.HP, stats[0]["base_stat"].AsInt32 },
+                    { PokemonStatsType.Attack, stats[1]["base_stat"].AsInt32 },
+                    { PokemonStatsType.Defense, stats[2]["base_stat"].AsInt32 },
+                    { PokemonStatsType.SpecialAttack, stats[3]["base_stat"].AsInt32 },
+                    { PokemonStatsType.SpecialDefense, stats[4]["base_stat"].AsInt32 },
+                    { PokemonStatsType.Speed, stats[5]["base_stat"].AsInt32 }
                 },
                 EvYield = new Dictionary<PokemonStatsType, int>
                 {
-                    { PokemonStatsType.HP, stats["HP"]["effort"].AsInt32 },
-                    { PokemonStatsType.Attack, stats["Attack"]["effort"].AsInt32 },
-                    { PokemonStatsType.Defense, stats["Defense"]["effort"].AsInt32 },
-                    { PokemonStatsType.SpecialAttack, stats["SpecialAttack"]["effort"].AsInt32 },
-                    { PokemonStatsType.SpecialDefense, stats["SpecialDefense"]["effort"].AsInt32 },
-                    { PokemonStatsType.Speed, stats["Speed"]["effort"].AsInt32 }
+                    { PokemonStatsType.HP, stats[0]["effort"].AsInt32 },
+                    { PokemonStatsType.Attack, stats[1]["effort"].AsInt32 },
+                    { PokemonStatsType.Defense, stats[2]["effort"].AsInt32 },
+                    { PokemonStatsType.SpecialAttack, stats[3]["effort"].AsInt32 },
+                    { PokemonStatsType.SpecialDefense, stats[4]["effort"].AsInt32 },
+                    { PokemonStatsType.Speed, stats[5]["effort"].AsInt32 }
                 },
                 PrimaryType = (PokemonType)Enum.Parse(typeof(PokemonType), types[0]["type"]["name"].AsString, true),
                 SecondaryType = types.Count > 1 ? (PokemonType?)Enum.Parse(typeof(PokemonType), types[1]["type"]["name"].AsString, true) : null
