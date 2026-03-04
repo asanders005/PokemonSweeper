@@ -1,15 +1,17 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using PokemonSweeper.Data;
 using PokemonSweeper.Game;
 
 namespace PokemonSweeper
 {
     public partial class GameWindow : Window
     {
-        public GameWindow()
+        public GameWindow(DAL dal)
         {
             InitializeComponent();
-            Game = new PokeSweepGame();
+            _dal = dal;
+            Game = new PokeSweepGame(_dal);
         }
 
         public PokeSweepGame Game { get; set; }
@@ -33,5 +35,7 @@ namespace PokemonSweeper
         {
             MinesLeft.Content = "Pokeballs: " + count;
         }
+
+        private readonly DAL _dal;
     }
 }

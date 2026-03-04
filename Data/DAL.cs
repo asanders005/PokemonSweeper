@@ -25,15 +25,10 @@ namespace PokemonSweeper.Data
 
         private async Task CreatePokemonMasterList()
         {
-            var dict = await PokeApiService.GetAllPokemon();
+            Dictionary<int, string> dict;
 
             if (_database != null)
             {
-                var docs = dict.Select(entry => new BsonDocument
-            {
-                { "dex_num", entry.Key },
-                { "name", entry.Value }
-            }).ToList();
 
                 var collectionNames = await _database.ListCollectionNames().ToListAsync();
                 if (collectionNames.Contains("pokemon_master_list"))
@@ -45,6 +40,13 @@ namespace PokemonSweeper.Data
                 if (collection == null)
                     throw new Exception("Failed to create Pokemon collection in MongoDB.");
 
+                dict = await PokeApiService.GetAllPokemon();
+
+                var docs = dict.Select(entry => new BsonDocument
+                {
+                    { "dex_num", entry.Key },
+                    { "name", entry.Value }
+                }).ToList();
 
                 if (docs.Count > 0)
                     await collection.InsertManyAsync(docs);
@@ -54,7 +56,8 @@ namespace PokemonSweeper.Data
                 string filePath = "save_data/pokemon_master_list.json";
                 if (System.IO.File.Exists(filePath))
                     return;
-
+                
+                dict = await PokeApiService.GetAllPokemon();
                 string json = JsonSerializer.Serialize(dict);
 
                 try

@@ -2,14 +2,16 @@
 using System.Diagnostics;
 using System.Linq;
 using PokemonSweeper;
+using PokemonSweeper.Data;
 using PokemonSweeper.Game;
 
 namespace PokemonSweeper.Game
 {
     public class PokeSweepGame
     {
-        public PokeSweepGame()
+        public PokeSweepGame(DAL dal)
         {
+            _dal = dal;
             Level = 0;
             Score = 0;
             Pokemon = new List<Pokemon>(); // make empty list of Pokemon captured
@@ -65,5 +67,7 @@ namespace PokemonSweeper.Game
             }
             window.MinesLeftLabel( FieldLevels[Level].Pokemon );
         }
+
+        private readonly DAL _dal;
     }
 }
