@@ -178,8 +178,11 @@ namespace PokemonSweeper.Data
                     string json = await System.IO.File.ReadAllTextAsync(filePath);
                     return JsonSerializer.Deserialize<Pokemon>(json);
                 }
+                else
+                {
+                    return await CreatePokemonFromAPI(dexNum);
+                }
             }
-            return null;
         }
     }
 }
