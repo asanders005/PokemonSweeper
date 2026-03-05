@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 using PokemonSweeper.Game.Messages;
 using System.Windows.Documents;
 using System.Collections.Generic;
-using PokemonSweeper.Game;
+using PokemonSweeper.Game.PokemonModels;
 
 namespace PokemonSweeper
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using PokemonSweeper;
 using PokemonSweeper.Data;
-using PokemonSweeper.Game;
+using PokemonSweeper.Game.PokemonModels;
 
 namespace PokemonSweeper.Game
 {

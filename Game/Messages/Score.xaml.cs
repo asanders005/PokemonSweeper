@@ -1,4 +1,4 @@
-﻿using PokemonSweeper.Game;
+﻿using PokemonSweeper.Game.PokemonModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;

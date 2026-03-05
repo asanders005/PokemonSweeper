@@ -1,4 +1,4 @@
-﻿using PokemonSweeper.Game;
+﻿using PokemonSweeper.Game.PokemonModels;
 using System.Windows;
 using System.Windows.Media.Imaging;
 

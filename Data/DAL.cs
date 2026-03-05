@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using PokemonSweeper.API;
-using PokemonSweeper.Game;
+using PokemonSweeper.Game.PokemonModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

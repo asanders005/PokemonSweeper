@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using PokemonSweeper.Game;
+using PokemonSweeper.Game.PokemonModels;
 
 namespace PokemonSweeper.API
 {
