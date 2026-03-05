@@ -9,10 +9,17 @@ namespace PokemonSweeper.Game.PokemonModels
     public class PokemonTeam
     {
         public PlayerPokemon[] Pokemon { get; set; } = new PlayerPokemon[6];
+
+        #region Battle Properties
+
         public PlayerPokemon ActivePokemon { get => Pokemon[ActivePokemonIndex]; }
         public int ActivePokemonIndex { get; set; }
 
         public bool HasUsablePokemon => Pokemon.Any(p => p != null && !p.IsFainted);
+
+        #endregion
+
+        #region Battle Methods
 
         /// <summary>
         /// Function to battle a wild Pokemon.
@@ -123,5 +130,7 @@ namespace PokemonSweeper.Game.PokemonModels
                     pokemon.ResetHP();
             }
         }
+
+        #endregion
     }
 }

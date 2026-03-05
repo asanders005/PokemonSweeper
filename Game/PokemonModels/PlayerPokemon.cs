@@ -11,6 +11,8 @@ namespace PokemonSweeper.Game.PokemonModels
 {
     public class PlayerPokemon
     {
+        #region Pokemon Properties
+
         public Pokemon Pokemon { get; set; }
         public int Level { get; set; }
         public int Experience { get; set; } = 0;
@@ -18,6 +20,8 @@ namespace PokemonSweeper.Game.PokemonModels
         [JsonIgnore]
         public string SpriteUrl => IsShiny ? Pokemon.ShinySprite : Pokemon.DefaultSprite;
         public Dictionary<PokemonStatsType, PokemonStat> Stats { get; set; }
+
+        #endregion
 
         #region Battle Properties
         [JsonIgnore]
@@ -42,6 +46,8 @@ namespace PokemonSweeper.Game.PokemonModels
         public int TotalEV => Stats.Values.Sum(s => s.EV);
 
         #endregion
+
+        #region Battle Methods
 
         public void ResetHP()
         {
@@ -84,6 +90,10 @@ namespace PokemonSweeper.Game.PokemonModels
             // Simplified exp yield calculation
             return (int)((Pokemon.BaseExpYield * Level) / 7.0f);
         }
+
+        #endregion
+
+        #region Factory Methods
 
         public static async Task<PlayerPokemon> CreateWithRandomStats(DAL dal, int level = 0, int levelMargin = 10)
         {
@@ -189,5 +199,7 @@ namespace PokemonSweeper.Game.PokemonModels
                 { "stats", statsDoc }
             };
         }
+
+        #endregion
     }
 }

@@ -11,6 +11,8 @@ namespace PokemonSweeper.Game.PokemonModels
 {
     public class Pokemon
     {
+        #region Pokemon Properties
+
         public int DexNum { get; set; }
 
         public string Name { get; set; } = "";
@@ -24,6 +26,10 @@ namespace PokemonSweeper.Game.PokemonModels
         public int BST => BaseStats.Values.Sum();
         public Dictionary<PokemonStatsType, int> EvYield { get; set; }
         public int BaseExpYield { get; set; }
+
+        #endregion
+
+        #region Factory Methods
 
         public static Pokemon CreateFromBson(BsonDocument bsonDoc)
         {
@@ -103,5 +109,7 @@ namespace PokemonSweeper.Game.PokemonModels
                 }
             };
         }
+        
+        #endregion
     }
 }
