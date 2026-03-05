@@ -1,0 +1,25 @@
+<Window x:Class="PokemonSweeper.PokemonDetails"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:PokemonSweeper"
+        mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        Title="Pokemon Details" Width="527.957" Height="609.678">
+    <DockPanel>
+        <Label Name="PokemonName" HorizontalContentAlignment="Center" Content="Name" FontSize="40" Height="100" VerticalContentAlignment="Bottom" HorizontalAlignment="Center" Margin="10" DockPanel.Dock="Top"/>
+        <Image Name="PokemonImage" VerticalAlignment="Top" Width="100" Source="images/pokeball.png" Margin="50 0 0 0" DockPanel.Dock="Left"/>
+        <DockPanel Margin="50 0 0 0" HorizontalAlignment="Left">
+            <Label Name="PokemonType" Content="Type" FontSize="20" VerticalContentAlignment="Top"/>
+            <DockPanel>
+                <Label Name="PokemonHP" HorizontalContentAlignment="Center" Content="HP: 100" FontSize="20" VerticalContentAlignment="Top" HorizontalAlignment="Left"/>
+                <Label Name="PokemonAttack" HorizontalContentAlignment="Center" Content="Attack: 100" FontSize="20" VerticalContentAlignment="Top" HorizontalAlignment="Left"/>
+            </DockPanel>
+            <DockPanel>
+                <Label Name="PokemonSpAttack" HorizontalContentAlignment="Center" Content="Sp. Attack: 100" FontSize="20" VerticalContentAlignment="Top" HorizontalAlignment="Center"/>
+                <Label Name="PokemonSpDefense" HorizontalContentAlignment="Center" Content="Sp. Defense: 100" FontSize="20" VerticalContentAlignment="Top" HorizontalAlignment="Center"/>
+            </DockPanel>
+        </DockPanel>
+    </DockPanel>
+</Window>
