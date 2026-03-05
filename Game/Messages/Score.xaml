@@ -22,8 +22,8 @@
                 <DataTemplate>
                     <Border BorderBrush="Black" BorderThickness="1" Width="70">
                         <StackPanel>
-                            <Image Source="{Binding Path=Picture}" Stretch="Fill" Height="50" Width="50"></Image>
-                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=Name}"></TextBlock>
+                            <Image Source="{Binding Path=SpriteUrl}" Stretch="Fill" Height="50" Width="50"></Image>
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Path=Pokemon.Name}"></TextBlock>
                         </StackPanel>
                     </Border>
                 </DataTemplate>

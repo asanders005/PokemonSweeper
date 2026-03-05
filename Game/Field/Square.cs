@@ -119,7 +119,7 @@ namespace PokemonSweeper
             Field.NrOfClicks++;
             if (Pokemon != null)
             {
-                //Content = new Image {Source = Pokemon.Picture};
+                Content = new Image {Source = new BitmapImage(new Uri(Pokemon.SpriteUrl))};
                 Status = SquareStatus.Pokemon;
                 Background = Brushes.Red;
                 BorderBrush = Brushes.Red;

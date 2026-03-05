@@ -3,6 +3,7 @@ using PokemonSweeper.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
@@ -60,7 +61,10 @@ namespace PokemonSweeper.Game
         public PokemonType PrimaryType { get; set; }
         public PokemonType? SecondaryType { get; set; } = null;
         public Dictionary<PokemonStatsType, int> BaseStats { get; set; }
+        [JsonIgnore]
+        public int BST => BaseStats.Values.Sum();
         public Dictionary<PokemonStatsType, int> EvYield { get; set; }
+        public int BaseExpYield { get; set; }
 
         public static Pokemon CreateFromBson(BsonDocument bsonDoc)
         {
@@ -92,7 +96,8 @@ namespace PokemonSweeper.Game
                     { PokemonStatsType.SpecialAttack, evYield["SpecialAttack"].AsInt32 },
                     { PokemonStatsType.SpecialDefense, evYield["SpecialDefense"].AsInt32 },
                     { PokemonStatsType.Speed, evYield["Speed"].AsInt32 }
-                }
+                },
+                BaseExpYield = bsonDoc["base_exp_yield"].AsInt32
             };
         }
 
@@ -133,6 +138,9 @@ namespace PokemonSweeper.Game
                         { "SpecialDefense", EvYield[PokemonStatsType.SpecialDefense] },
                         { "Speed", EvYield[PokemonStatsType.Speed] }
                     }
+                },
+                {
+                    "base_exp_yield", BaseExpYield
                 }
             };
         }
@@ -143,12 +151,14 @@ namespace PokemonSweeper.Game
         public Pokemon Pokemon { get; set; }
         public int Level { get; set; }
         public bool IsShiny { get; set; }
+        [JsonIgnore]
+        public string SpriteUrl => IsShiny ? Pokemon.ShinySprite : Pokemon.DefaultSprite;
         public Dictionary<PokemonStatsType, PokemonStat> Stats { get; set; }
 
         public static async Task<PlayerPokemon> CreateWithRandomStats(DAL dal, int level = 0, int levelMargin = 10)
         {
             var random = new Random();
-            var randomDexNum = random.Next(1, 1029); // Assuming there are 1028 Pokemon in the database
+            var randomDexNum = random.Next(1, 1026); // Assuming there are 1025 Pokemon in the database
 
             var pokemonBase = await dal.GetPokemonByDexNumAsync(randomDexNum);
 

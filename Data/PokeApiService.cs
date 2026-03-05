@@ -73,6 +73,7 @@ namespace PokemonSweeper.API
                     { PokemonStatsType.SpecialDefense, stats[4]["effort"].AsInt32 },
                     { PokemonStatsType.Speed, stats[5]["effort"].AsInt32 }
                 },
+                BaseExpYield = pokemonData["base_experience"].AsInt32,
                 PrimaryType = (PokemonType)Enum.Parse(typeof(PokemonType), types[0]["type"]["name"].AsString, true),
                 SecondaryType = types.Count > 1 ? (PokemonType?)Enum.Parse(typeof(PokemonType), types[1]["type"]["name"].AsString, true) : null
             };
