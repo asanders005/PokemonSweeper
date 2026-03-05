@@ -29,8 +29,11 @@ namespace PokemonSweeper.API
             Dictionary<int, string> pokemonDict = new Dictionary<int, string>();
             foreach (var result in results)
             {
-                string name = result["name"].AsString;
                 int pokedexNum = GetPokemonIdFromUrl(result["url"].AsString);
+                if (pokedexNum <= 0 || pokedexNum > 10000)
+                    continue; // Skip invalid dex numbers and special forms
+
+                string name = result["name"].AsString;
                 pokemonDict[pokedexNum] = name;
             }
 

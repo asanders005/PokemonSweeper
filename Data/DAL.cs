@@ -15,6 +15,16 @@ namespace PokemonSweeper.Data
     public class DAL
     {
         private readonly IMongoDatabase _database;
+        public Dictionary<int, string> PokemonMasterList 
+        { get
+            {
+                if (pokemonMasterList.Count == 0)
+                {
+                    GetPokemonMasterList();
+                }
+                return pokemonMasterList;
+            } }
+        private Dictionary<int, string> pokemonMasterList = new Dictionary<int, string>();
 
         public DAL(IMongoDatabase database = null)
         {
@@ -25,22 +35,32 @@ namespace PokemonSweeper.Data
 
         private async Task CreatePokemonMasterList()
         {
-            Dictionary<int, string> dict;
+            Dictionary<int, string> dict = await PokeApiService.GetAllPokemon();
 
             if (_database != null)
             {
 
                 var collectionNames = await _database.ListCollectionNames().ToListAsync();
+                Dictionary<int, string> existingEntries = new Dictionary<int, string>();
+                IMongoCollection<BsonDocument> collection = null;
+
                 if (collectionNames.Contains("pokemon_master_list"))
-                    return;
+                {
+                    collection = _database.GetCollection<BsonDocument>("pokemon_master_list");
+                    existingEntries = (await collection.Find(new BsonDocument()).ToListAsync())
+                        .ToDictionary(doc => doc["dex_num"].AsInt32, doc => doc["name"].AsString);
 
-                await _database.CreateCollectionAsync("pokemon_master_list");
-                var collection = _database.GetCollection<BsonDocument>("pokemon_master_list");
+                    if (existingEntries.Count == dict.Count && !existingEntries.Except(dict).Any())
+                        return;
+                }
+                else
+                {
+                    await _database.CreateCollectionAsync("pokemon_master_list");
+                    collection = _database.GetCollection<BsonDocument>("pokemon_master_list");
 
-                if (collection == null)
-                    throw new Exception("Failed to create Pokemon collection in MongoDB.");
-
-                dict = await PokeApiService.GetAllPokemon();
+                    if (collection == null)
+                        throw new Exception("Failed to create Pokemon collection in MongoDB.");
+                }
 
                 var docs = dict.Select(entry => new BsonDocument
                 {
@@ -54,10 +74,15 @@ namespace PokemonSweeper.Data
             else
             {
                 string filePath = "save_data/pokemon_master_list.json";
+                Dictionary<int, string> existingEntries = new Dictionary<int, string>();
+
                 if (System.IO.File.Exists(filePath))
-                    return;
-                
-                dict = await PokeApiService.GetAllPokemon();
+                {
+                    existingEntries = JsonSerializer.Deserialize<Dictionary<int, string>>(await System.IO.File.ReadAllTextAsync(filePath));
+                    if (existingEntries.Count == dict.Count && !existingEntries.Except(dict).Any())
+                        return;
+                }
+
                 string json = JsonSerializer.Serialize(dict);
 
                 try
@@ -152,6 +177,25 @@ namespace PokemonSweeper.Data
             }
 
             return new Dictionary<int, string>();
+        }
+
+        private void GetPokemonMasterList()
+        {
+            if (_database != null)
+            {
+                var collection = _database.GetCollection<BsonDocument>("pokemon_master_list");
+                var documents = collection.Find(new BsonDocument()).ToList();
+                pokemonMasterList = documents.ToDictionary(doc => doc["dex_num"].AsInt32, doc => doc["name"].AsString);
+            }
+            else
+            {
+                string filePath = "save_data/pokemon_master_list.json";
+                if (System.IO.File.Exists(filePath))
+                {
+                    string json = System.IO.File.ReadAllText(filePath);
+                    pokemonMasterList = JsonSerializer.Deserialize<Dictionary<int, string>>(json);
+                }
+            }
         }
 
         public async Task<Pokemon> GetPokemonByDexNumAsync(int dexNum)

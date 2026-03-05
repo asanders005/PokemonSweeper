@@ -158,7 +158,7 @@ namespace PokemonSweeper.Game
         public static async Task<PlayerPokemon> CreateWithRandomStats(DAL dal, int level = 0, int levelMargin = 10)
         {
             var random = new Random();
-            var randomDexNum = random.Next(1, 1026); // Assuming there are 1025 Pokemon in the database
+            var randomDexNum = random.Next(1, dal.PokemonMasterList.Count);
 
             var pokemonBase = await dal.GetPokemonByDexNumAsync(randomDexNum);
 
