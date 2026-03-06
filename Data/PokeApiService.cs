@@ -82,6 +82,44 @@ namespace PokemonSweeper.API
             };
         }
 
+        public static async Task<TypeEffectiveness> GetTypeEffectiveness(PokemonType type)
+        {
+            var response = await _httpClient.GetAsync($"type/{type.ToString().ToLower()}");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var typeData = BsonDocument.Parse(content);
+            var damageRelations = typeData["damage_relations"];
+            var effectiveness = new TypeEffectiveness
+            {
+                Type = type
+            };
+
+            foreach (var relation in damageRelations.AsBsonDocument)
+            {
+                string relationType = relation.Name;
+                var relatedTypes = relation.Value.AsBsonArray;
+                foreach (var relatedType in relatedTypes)
+                {
+                    PokemonType relatedPokemonType = (PokemonType)Enum.Parse(typeof(PokemonType), relatedType["name"].AsString, true);
+                    float multiplier = relationType switch
+                    {
+                        "double_damage_to" => 2.0f,
+                        "half_damage_to" => 0.5f,
+                        "no_damage_to" => 0.0f,
+                        "double_damage_from" => 2.0f,
+                        "half_damage_from" => 0.5f,
+                        "no_damage_from" => 0.0f,
+                        _ => throw new Exception($"Unknown damage relation type: {relationType}")
+                    };
+                    if (relationType.EndsWith("to"))
+                        effectiveness.AttackEffectiveness[relatedPokemonType] = multiplier;
+                    else
+                        effectiveness.DefenseEffectiveness[relatedPokemonType] = multiplier;
+                }
+            }
+            return effectiveness;
+        }
+
         private static int GetPokemonIdFromUrl(string url)
         {
             var segments = url.TrimEnd('/').Split('/');

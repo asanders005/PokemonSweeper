@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PokemonSweeper.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,15 @@ namespace PokemonSweeper.Game.PokemonModels
 {
     public class PokemonTeam
     {
+        private readonly Random _random = new Random();
+        private readonly DAL _dal;
+
         public PlayerPokemon[] Pokemon { get; set; } = new PlayerPokemon[6];
+
+        public PokemonTeam(DAL dal)
+        {
+            _dal = dal;
+        }
 
         #region Battle Properties
 
@@ -26,7 +35,7 @@ namespace PokemonSweeper.Game.PokemonModels
         /// </summary>
         /// <param name="opponent">The wild Pokemon to battle against.</param>
         /// <returns>True if the battle was successful, otherwise false.</returns>
-        public bool Battle(PlayerPokemon opponent)
+        public async Task<bool> Battle(PlayerPokemon opponent)
         {
             while (HasUsablePokemon && !opponent.IsFainted)
             {
@@ -41,9 +50,19 @@ namespace PokemonSweeper.Game.PokemonModels
                     Math.Max(1, ActivePokemon.Attack - opponent.Defense) :
                     Math.Max(1, ActivePokemon.SpecialAttack - opponent.SpecialDefense);
 
+                TypeEffectiveness playerTypeEffectiveness = await _dal.GetTypeEffectivenessAsync(new PokemonType?[] { ActivePokemon.Pokemon.PrimaryType, ActivePokemon.Pokemon.SecondaryType });
+                damageToOpponent = (int)(damageToOpponent * playerTypeEffectiveness.AttackEffectiveness[opponent.Pokemon.PrimaryType] *
+                    (opponent.Pokemon.SecondaryType.HasValue ? playerTypeEffectiveness.AttackEffectiveness[opponent.Pokemon.SecondaryType.Value] : 1f));
+                damageToOpponent += (int)(damageToOpponent * (float)(_random.NextDouble() * 0.2f) - 0.1f); // Add some randomness to the damage (-10% - 10%)
+
                 int damageToPlayer = opponentUsesPhysicalAttack ?
                     Math.Max(1, opponent.Attack - ActivePokemon.Defense) :
                     Math.Max(1, opponent.SpecialAttack - ActivePokemon.SpecialDefense);
+
+                TypeEffectiveness opponentTypeEffectiveness = await _dal.GetTypeEffectivenessAsync(new PokemonType?[] { opponent.Pokemon.PrimaryType, opponent.Pokemon.SecondaryType });
+                damageToPlayer = (int)(damageToPlayer * opponentTypeEffectiveness.AttackEffectiveness[ActivePokemon.Pokemon.PrimaryType] *
+                    (ActivePokemon.Pokemon.SecondaryType.HasValue ? opponentTypeEffectiveness.AttackEffectiveness[ActivePokemon.Pokemon.SecondaryType.Value] : 1f));
+                damageToPlayer += (int)(damageToPlayer * (float)(_random.NextDouble() * 0.2f) - 0.1f); // Add some randomness to the damage (-10% - 10%)
 
                 if (playerGoesFirst)
                 {
