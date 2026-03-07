@@ -61,7 +61,7 @@ namespace PokemonSweeper.Game
 
             window.MineFieldGrid.Children.Clear();
 
-            for (var i = Level; Score >= FieldLevels[i].NextLevel && i <= FieldLevels.Count(); i++) Level++;
+            //for (var i = Level; Score >= FieldLevels[i].NextLevel && i <= FieldLevels.Count(); i++) Level++;
             window.MineFieldGrid.Rows = FieldLevels[Level].Rows;
             window.MineFieldGrid.Columns = FieldLevels[Level].Columns;
             window.Width = 600*FieldLevels[Level].Columns/FieldLevels[Level].Rows;
