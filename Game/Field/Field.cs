@@ -61,7 +61,7 @@ namespace PokemonSweeper
             {
                 for (var column = 0; column < Columns; column++)
                 {
-                    Squares.Add(new Square(this, Rows, Columns, row, column, teamService));
+                    Squares.Add(new Square(this, Rows, Columns, row, column, teamService, _dal));
                     if (pokemonPlacers.Contains(Squares.Count - 1))
                     {
                         Squares[Squares.Count - 1].Pokemon = await PlayerPokemon.CreateWithRandomStats(_dal);

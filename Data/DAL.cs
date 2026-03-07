@@ -279,6 +279,16 @@ namespace PokemonSweeper.Data
             }
         }
 
+        public async Task SavePlayerPokemonAsync(IEnumerable<PlayerPokemon> playerPokemons)
+        {
+            if (playerPokemons == null)
+                throw new ArgumentNullException(nameof(playerPokemons));
+            foreach (var playerPokemon in playerPokemons)
+            {
+                await SavePlayerPokemonAsync(playerPokemon);
+            }
+        }
+
         public async Task SavePokemonTeamAsync(PokemonTeam team)
         {
             if (_database != null)

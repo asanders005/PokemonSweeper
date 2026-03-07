@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using PokemonSweeper.Game.PokemonModels;
 using PokemonSweeper.Services;
 using System.Threading.Tasks;
+using PokemonSweeper.Data;
 
 namespace PokemonSweeper
 {
@@ -24,13 +25,14 @@ namespace PokemonSweeper
             Question
         }
 
-        public Square(Field field, int rows, int columns, int row, int column, PokemonTeamService pokemonTeamService)
+        public Square(Field field, int rows, int columns, int row, int column, PokemonTeamService pokemonTeamService, DAL dal)
         {
             Field = field;
             NrOfRows = rows;
             NrOfColumns = columns;
             Row = row;
             _pokemonTeamService = pokemonTeamService;
+            _d = dal;
             Column = column;
             Pokemon = null;
             Status = SquareStatus.Open;
@@ -51,6 +53,7 @@ namespace PokemonSweeper
         public PlayerPokemon Pokemon { get; set; }
 
         private PokemonTeamService _pokemonTeamService;
+        private readonly DAL _d;
 
         public int Mines
         {
@@ -87,7 +90,7 @@ namespace PokemonSweeper
                             win = false;
                         }
                     }
-                    if (win) Score.ShowScore(sender, Field);
+                    if (win) Score.ShowScore(sender, Field, _d);
                 }
             }
             else if (Status == SquareStatus.Flagged)
@@ -115,7 +118,7 @@ namespace PokemonSweeper
             {
                 await SwipeSquare(window);
                 if (Field.ClearedSquares + window.Game.FieldLevels[window.Game.Level].Pokemon ==
-                    window.Game.FieldLevels[window.Game.Level].Dimention) Score.ShowScore(window, Field);
+                    window.Game.FieldLevels[window.Game.Level].Dimention) Score.ShowScore(window, Field, _d);
             }
         }
 
