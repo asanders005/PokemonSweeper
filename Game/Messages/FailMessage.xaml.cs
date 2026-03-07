@@ -18,7 +18,7 @@ namespace PokemonSweeper.Game.Messages
         {
             var Fail = new FailMessage();
             Fail.EscapedPokemon.Source = new BitmapImage(new System.Uri(pokemon.SpriteUrl));
-            Fail.Message.Text = pokemon.Pokemon.DexNum + " - " + pokemon.Pokemon.Name + " managed to escape!";
+            Fail.Message.Text = $"A wild {pokemon.Pokemon.Name} Appeared! \n The {pokemon.Pokemon.Name} defeated your Pokemon! \n You whited out!";
             Fail.Title = "Game over!";
             Fail.Owner = window;
             Fail.ShowDialog();

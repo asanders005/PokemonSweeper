@@ -5,14 +5,17 @@ using System.Threading.Tasks;
 using PokemonSweeper;
 using PokemonSweeper.Data;
 using PokemonSweeper.Game.PokemonModels;
+using PokemonSweeper.Services;
 
 namespace PokemonSweeper.Game
 {
     public class PokeSweepGame
     {
-        public PokeSweepGame(DAL dal)
+        public PokeSweepGame(DAL dal, PokemonTeamService teamService)
         {
             _dal = dal;
+            _pokemonTeamService = teamService;
+
             Level = 0;
             Score = 0;
             Pokemon = new List<PlayerPokemon>(); // make empty list of Pokemon captured
@@ -49,6 +52,8 @@ namespace PokemonSweeper.Game
 
         public async Task NewField(GameWindow window)
         {
+            if (_pokemonTeamService.CurrentTeam == null) _pokemonTeamService.CurrentTeam = await _dal.LoadPokemonTeamAsync();
+
             window.MineFieldGrid.Children.Clear();
 
             for (var i = Level; Score >= FieldLevels[i].NextLevel && i <= FieldLevels.Count(); i++) Level++;
@@ -61,7 +66,8 @@ namespace PokemonSweeper.Game
                 FieldLevels[Level].Columns,
                 FieldLevels[Level].Pokemon,
                 FieldLevels[Level].Open, window, 
-                _dal);
+                _dal,
+                _pokemonTeamService);
 
             foreach (var square in Field.Squares)
             {
@@ -72,6 +78,7 @@ namespace PokemonSweeper.Game
             window.MinesLeftLabel( FieldLevels[Level].Pokemon );
         }
 
+        private PokemonTeamService _pokemonTeamService;
         private readonly DAL _dal;
     }
 }
