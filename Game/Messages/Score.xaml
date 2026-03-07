@@ -12,7 +12,7 @@
             
         </Grid.ColumnDefinitions>
         <TextBlock Name="score" Grid.Column="0" Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">Goed zo! Je hebt alle Pokemon gevangen!!</TextBlock>
-        <ListBox Grid.Column="0" Grid.Row="1" Name="ListBoxPokemon" DockPanel.Dock="Top" Height="100" Margin="10">
+        <ListBox Grid.Column="0" Grid.Row="1" Name="ListBoxPokemon" SelectionMode="Multiple" DockPanel.Dock="Top" Height="100" Margin="10" SelectionChanged="ListBoxPokemon_SelectionChanged">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>
@@ -30,7 +30,9 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Button Name="Next" Grid.Column="0" Grid.Row="2" Width="75" VerticalAlignment="Stretch"  HorizontalAlignment="Right" Click="Next_Click">Next Level >></Button>
+        <TextBlock Name="SelectionInfo" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">Select up to 0 Pokemon to keep.</TextBlock>
+
+        <Button Name="Next" Grid.Column="0" Grid.Row="2" Width="125" VerticalAlignment="Stretch"  HorizontalAlignment="Right" Click="Next_Click">Return to Menu >></Button>
 
     </Grid>
 </Window>
