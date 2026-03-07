@@ -27,6 +27,14 @@ namespace PokemonSweeper.Game.Messages
 
         private void retry_Click(object sender, RoutedEventArgs e)
         {
+            // Calling Code automatically resets the game, so we just need to close the message box
+            Close();
+        }
+
+        private void MainMenu_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: Navigate back to the main menu
+            // might need to make the method async
             Close();
         }
     }

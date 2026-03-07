@@ -18,10 +18,10 @@ namespace PokemonSweeper.Game.Field
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class MainMenu : Window
     {
         Data.DAL dal= new Data.DAL();
-        public Window1()
+        public MainMenu()
         {
             InitializeComponent();
         }

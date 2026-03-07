@@ -42,11 +42,11 @@ namespace PokemonSweeper
             // Register application services
             services.AddSingleton<PokemonTeamService>();
             services.AddSingleton<DAL>();
-            services.AddTransient<Window1>();
+            services.AddTransient<MainMenu>();
 
             ServiceProvider = services.BuildServiceProvider();
 
-            var mainWindow = ServiceProvider.GetRequiredService<Window1>();
+            var mainWindow = ServiceProvider.GetRequiredService<MainMenu>();
             mainWindow.Show();
         }
     }

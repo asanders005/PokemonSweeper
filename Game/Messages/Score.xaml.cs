@@ -2,6 +2,7 @@
 using PokemonSweeper.Game.PokemonModels;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace PokemonSweeper.Game.Messages
@@ -62,12 +63,28 @@ namespace PokemonSweeper.Game.Messages
             SelectionInfo.Text = $"Selected {ListBoxPokemon.SelectedItems.Count} / {_maxSelectablePokemon} Pokemon.";
         }
 
+        private async void Retry_Click(object sender, RoutedEventArgs e)
+        {
+            await SavePokemon();
+
+            var OwnerWindow = Owner as GameWindow;
+            await OwnerWindow.Game.NewField(OwnerWindow);
+
+            Close();
+        }
+
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
-            var selectedPokemon = ListBoxPokemon.SelectedItems.Cast<PlayerPokemon>().ToList();
+            await SavePokemon();
 
-            await _dal.SavePlayerPokemonAsync(selectedPokemon);
+            // TODO: Return to main menu
             Close();
+        }
+
+        private async Task SavePokemon()
+        {
+            var selectedPokemon = ListBoxPokemon.SelectedItems.Cast<PlayerPokemon>().ToList();
+            await _dal.SavePlayerPokemonAsync(selectedPokemon);
         }
     }
 }

@@ -55,6 +55,17 @@ namespace PokemonSweeper
         private PokemonTeamService _pokemonTeamService;
         private readonly DAL _d;
 
+        private static readonly Brush[] NumberColors = {
+            Brushes.Blue,
+            Brushes.Green,
+            Brushes.Red,
+            Brushes.DarkBlue,
+            Brushes.Brown,
+            Brushes.Cyan,
+            Brushes.Magenta,
+            Brushes.Orange
+        };
+
         public int Mines
         {
             get
@@ -141,74 +152,12 @@ namespace PokemonSweeper
                 else
                     FailMessage.ShowMessage(window, Pokemon);
             }
-            else if (Mines ==1)
+            else if (Mines > 0)
             {
                 Content = Mines;
                 Status = SquareStatus.Cleared;
                 Background = Brushes.White;
-                Foreground = Brushes.Blue;
-                BorderBrush = Brushes.White;
-                IsEnabled = false;
-            }
-            else if (Mines == 2)
-            {
-                Content = Mines;
-                Status = SquareStatus.Cleared;
-                Background = Brushes.White;
-                Foreground = Brushes.Green;
-                BorderBrush = Brushes.White;
-                IsEnabled = false;
-            }
-            else if (Mines == 3)
-            {
-                Content = Mines;
-                Status = SquareStatus.Cleared;
-                Background = Brushes.White;
-                Foreground = Brushes.Red;
-                BorderBrush = Brushes.White;
-                IsEnabled = false;
-            }
-            else if (Mines == 4)
-            {
-                Content = Mines;
-                Status = SquareStatus.Cleared;
-                Background = Brushes.White;
-                Foreground= Brushes.DarkBlue;
-                BorderBrush = Brushes.White;
-                IsEnabled = false;
-            }
-            else if (Mines == 5)
-            {
-                Content = Mines;
-                Status = SquareStatus.Cleared;
-                Background = Brushes.White;
-                Foreground = Brushes.DarkRed;
-                BorderBrush = Brushes.White;
-                IsEnabled = false;
-            }
-            else if (Mines == 6)
-            {
-                Content = Mines;
-                Status = SquareStatus.Cleared;
-                Background = Brushes.White;
-                Foreground = Brushes.Teal;
-                BorderBrush = Brushes.White;
-                IsEnabled = false;
-            }
-            else if (Mines == 7)
-            {
-                Content = Mines;
-                Status = SquareStatus.Cleared;
-                Background = Brushes.White;
-                BorderBrush = Brushes.White;
-                IsEnabled = false;
-            }
-            else if (Mines == 8)
-            {
-                Content = Mines;
-                Status = SquareStatus.Cleared;
-                Background = Brushes.White;
-                Foreground = Brushes.Gray;
+                Foreground = NumberColors[Mines - 1];
                 BorderBrush = Brushes.White;
                 IsEnabled = false;
             }
@@ -222,7 +171,7 @@ namespace PokemonSweeper
                     (s => (s.Row >= Row - 1) && (s.Row <= Row + 1) &&
                           (s.Column >= Column - 1) && (s.Column <= Column + 1) && (s.Status == SquareStatus.Open))
                     .ToList()))
-                    OtherSquare.SwipeSquare(window);
+                await OtherSquare.SwipeSquare(window);
             }
         }
     }
