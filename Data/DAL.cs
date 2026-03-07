@@ -12,6 +12,11 @@ using System.Threading.Tasks;
 
 namespace PokemonSweeper.Data
 {
+    /// <summary>
+    /// A class to access and manage save data for the Pokemon Sweeper game. 
+    /// It can use either a MongoDB database or the local file system for storage, depending on whether or not a MongoDB connection is provided in Program.cs. 
+    /// It provides methods to save and load player Pokemon, Pokemon teams, and to fetch Pokemon data and type effectiveness information from the PokeAPI, caching results in the chosen storage method for future access.
+    /// </summary>
     public class DAL
     {
         private readonly IMongoDatabase _database;
@@ -39,6 +44,10 @@ namespace PokemonSweeper.Data
             _ = CreateDBPlayerPokemonCollection();
         }
 
+        /// <summary>
+        /// Creates the master list of all Pokemon by fetching data from the PokeAPI and storing it in either MongoDB or a local JSON file.
+        /// </summary>
+        /// <exception cref="Exception">Thrown if there is an error creating the master list.</exception>
         private async Task CreatePokemonMasterList()
         {
             Dictionary<int, string> dict = await PokeApiService.GetAllPokemon();
@@ -105,6 +114,11 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Creates the necessary collection for storing Pokemon data in MongoDB, or a directory for storing Pokemon JSON files if using the file system. 
+        /// If the collection or directory already exists, it does nothing. 
+        /// This method is called during DAL initialization to ensure the necessary storage structures are in place before any data operations are performed.
+        /// </summary>
         private async Task CreateDBPokemonCollection()
         {
             if (_database != null)
@@ -123,6 +137,11 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Creates the necessary collection for storing type effectiveness data in MongoDB, or a directory for storing type effectiveness JSON files if using the file system.
+        /// If the collection or directory already exists, it does nothing. 
+        /// This method is called during DAL initialization to ensure the necessary storage structures are in place before any data operations are performed.
+        /// </summary>
         private async Task CreateDBTypeEffectivenessCollection()
         {
             if (_database != null)
@@ -140,6 +159,12 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Creates the necessary collection for storing player Pokemon data in MongoDB, or a directory for storing player Pokemon JSON files if using the file system.
+        /// If the collection or directory already exists, it checks for existing player Pokemon entries to determine the next available unique ID for new PlayerPokemon instances, and then does nothing else.
+        /// This method is called during DAL initialization to ensure the necessary storage structures are in place before any data operations are performed.
+        /// </summary>
+        /// <returns></returns>
         private async Task CreateDBPlayerPokemonCollection()
         {
             if (_database != null)
@@ -169,6 +194,13 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Creates a Pokemon object by fetching data from the PokeAPI using the provided DexNum.
+        /// If the Pokemon already exists in the database or as a JSON file, it returns the existing Pokemon.
+        /// </summary>
+        /// <param name="dexNum">The PokeDex number of the Pokemon to fetch.</param>
+        /// <returns>The fetched or existing Pokemon object.</returns>
+        /// <exception cref="Exception">Thrown if the Pokemon cannot be fetched from the PokeAPI.</exception>
         private async Task<Pokemon> CreatePokemonFromAPI(int dexNum)
         {
             var pokemon = await PokeApiService.GetPokemonByDexNumber(dexNum);
@@ -210,6 +242,13 @@ namespace PokemonSweeper.Data
             return pokemon;
         }
 
+        /// <summary>
+        /// Creates a TypeEffectiveness object by fetching data from the PokeAPI using the provided PokemonType.
+        /// If the TypeEffectiveness already exists in the database or as a JSON file, it returns the existing TypeEffectiveness.
+        /// </summary>
+        /// <param name="type">The PokemonType for which to fetch type effectiveness.</param>
+        /// <returns>The fetched or existing TypeEffectiveness object.</returns>
+        /// <exception cref="Exception">Thrown if the TypeEffectiveness cannot be fetched from the PokeAPI.</exception>
         private async Task<TypeEffectiveness> CreateTypeEffectiveness(PokemonType type)
         {
             var effectiveness = await PokeApiService.GetTypeEffectiveness(type);
@@ -247,6 +286,12 @@ namespace PokemonSweeper.Data
             return effectiveness;
         }
 
+        /// <summary>
+        /// Saves a PlayerPokemon object to the database or as a JSON file, depending on the storage method being used.
+        /// </summary>
+        /// <param name="playerPokemon">The PlayerPokemon object to save.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the playerPokemon parameter is null.</exception>
         public async Task SavePlayerPokemonAsync(PlayerPokemon playerPokemon)
         {
             if (playerPokemon == null)
@@ -279,6 +324,12 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Saves a collection of PlayerPokemon objects to the database or as JSON files, depending on the storage method being used.
+        /// </summary>
+        /// <param name="playerPokemons">The collection of PlayerPokemon objects to save.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if the playerPokemons parameter is null.</exception>
         public async Task SavePlayerPokemonAsync(IEnumerable<PlayerPokemon> playerPokemons)
         {
             if (playerPokemons == null)
@@ -289,6 +340,11 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Saves a PokemonTeam object to the database or as a JSON file, depending on the storage method being used.
+        /// </summary>
+        /// <param name="team">The PokemonTeam object to save.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task SavePokemonTeamAsync(PokemonTeam team)
         {
             if (_database != null)
@@ -329,6 +385,10 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Retrieves the master list of all Pokemon, which is a dictionary mapping PokeDex numbers to Pokemon names.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation, with a dictionary mapping PokeDex numbers to Pokemon names as the result.</returns>
         public async Task<Dictionary<int, string>> GetPokemonMasterListAsync()
         {
             if (_database != null)
@@ -350,6 +410,9 @@ namespace PokemonSweeper.Data
             return new Dictionary<int, string>();
         }
 
+        /// <summary>
+        /// Retrieves the master list of all Pokemon and stores it in the pokemonMasterList field.
+        /// </summary>
         private void GetPokemonMasterList()
         {
             if (_database != null)
@@ -369,6 +432,13 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Retrieves a Pokemon object by its PokeDex number. 
+        /// It first checks if the Pokemon exists in the database or as a JSON file, and returns it if found. 
+        /// If not found, it fetches the Pokemon data from the PokeAPI, creates a new Pokemon object, saves it to the database or as a JSON file for future access, and then returns the newly created Pokemon object.
+        /// </summary>
+        /// <param name="dexNum">The PokeDex number of the Pokemon to retrieve.</param>
+        /// <returns>A task representing the asynchronous operation, with the retrieved or newly created Pokemon object as the result.</returns>
         public async Task<Pokemon> GetPokemonByDexNumAsync(int dexNum)
         {
             if (_database != null)
@@ -400,6 +470,13 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Retrieves the type effectiveness information for a given PokemonType.
+        /// It first checks if the information exists in the database or as a JSON file, and returns it if found.
+        /// If not found, it fetches the type effectiveness data from the PokeAPI, creates a new TypeEffectiveness object, saves it to the database or as a JSON file for future access, and then returns the newly created TypeEffectiveness object.
+        /// </summary>
+        /// <param name="type">The PokemonType for which to retrieve type effectiveness information.</param>
+        /// <returns>A task representing the asynchronous operation, with the retrieved or newly created TypeEffectiveness object as the result.</returns>
         public async Task<TypeEffectiveness> GetTypeEffectivenessAsync(PokemonType type)
         {
             if (_database != null)
@@ -431,6 +508,12 @@ namespace PokemonSweeper.Data
             }
         }
 
+        /// <summary>
+        /// Retrieves the combined type effectiveness information for a collection of Pokemon types.
+        /// </summary>
+        /// <param name="types">The collection of Pokemon types for which to retrieve combined type effectiveness information.</param>
+        /// <returns>A task representing the asynchronous operation, with the combined TypeEffectiveness object as the result.</returns>
+        /// <exception cref="ArgumentException">Thrown if the types collection is null or empty.</exception>
         public async Task<TypeEffectiveness> GetTypeEffectivenessAsync(IEnumerable<PokemonType?> types)
         {
             if (types == null || !types.Any())
@@ -464,6 +547,11 @@ namespace PokemonSweeper.Data
             return combinedEffectiveness;
         }
 
+        /// <summary>
+        /// Retrieves a PlayerPokemon object by its unique playerPokemonId.
+        /// </summary>
+        /// <param name="playerPokemonId">The unique identifier of the PlayerPokemon to retrieve.</param>
+        /// <returns>A task representing the asynchronous operation, with the retrieved PlayerPokemon object as the result.</returns>
         public async Task<PlayerPokemon> GetPlayerPokemonAsync(int playerPokemonId)
         {
             if (_database != null)
@@ -488,6 +576,10 @@ namespace PokemonSweeper.Data
             return null;
         }
 
+        /// <summary>
+        /// Loads the player's Pokemon team from the database or from a JSON file, depending on the storage method being used.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation, with the loaded PokemonTeam object as the result.</returns>
         public async Task<PokemonTeam> LoadPokemonTeamAsync()
         {
             if (_database != null)
