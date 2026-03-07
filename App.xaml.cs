@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using PokemonSweeper.Data;
+using PokemonSweeper.Game.Field;
+using PokemonSweeper.Game.PokemonModels;
+using PokemonSweeper.Services;
 
 namespace PokemonSweeper
 {
@@ -37,12 +40,13 @@ namespace PokemonSweeper
             }
 
             // Register application services
+            services.AddSingleton<PokemonTeamService>();
             services.AddSingleton<DAL>();
-            services.AddTransient<GameWindow>();
+            services.AddTransient<Window1>();
 
             ServiceProvider = services.BuildServiceProvider();
 
-            var mainWindow = ServiceProvider.GetRequiredService<GameWindow>();
+            var mainWindow = ServiceProvider.GetRequiredService<Window1>();
             mainWindow.Show();
         }
     }

@@ -8,6 +8,8 @@ using PokemonSweeper.Game.Messages;
 using System.Windows.Documents;
 using System.Collections.Generic;
 using PokemonSweeper.Game.PokemonModels;
+using PokemonSweeper.Services;
+using System.Threading.Tasks;
 
 namespace PokemonSweeper
 {
@@ -22,12 +24,13 @@ namespace PokemonSweeper
             Question
         }
 
-        public Square(Field field, int rows, int columns, int row, int column)
+        public Square(Field field, int rows, int columns, int row, int column, PokemonTeamService pokemonTeamService)
         {
             Field = field;
             NrOfRows = rows;
             NrOfColumns = columns;
             Row = row;
+            _pokemonTeamService = pokemonTeamService;
             Column = column;
             Pokemon = null;
             Status = SquareStatus.Open;
@@ -46,6 +49,8 @@ namespace PokemonSweeper
 
         public Field Field { get; set; }
         public PlayerPokemon Pokemon { get; set; }
+
+        private PokemonTeamService _pokemonTeamService;
 
         public int Mines
         {
@@ -104,17 +109,17 @@ namespace PokemonSweeper
             
         }
 
-        public void LeftButton(GameWindow window)
+        public async void LeftButton(GameWindow window)
         {
             if (Status == SquareStatus.Open)
             {
-                SwipeSquare(window);
+                await SwipeSquare(window);
                 if (Field.ClearedSquares + window.Game.FieldLevels[window.Game.Level].Pokemon ==
                     window.Game.FieldLevels[window.Game.Level].Dimention) Score.ShowScore(window, Field);
             }
         }
 
-        public void SwipeSquare(GameWindow window)
+        public async Task SwipeSquare(GameWindow window)
         {
             Field.NrOfClicks++;
             if (Pokemon != null)
@@ -124,13 +129,83 @@ namespace PokemonSweeper
                 Background = Brushes.Red;
                 BorderBrush = Brushes.Red;
                 IsEnabled = false;
-                FailMessage.ShowMessage(window, Pokemon);
+
+                var battleResult = await _pokemonTeamService.CurrentTeam.Battle(Pokemon);
+
+                // If player wins, show battle result, otherwise show fail message
+                if (battleResult.Item1)
+                    BattleMessage.ShowMessage(window, Pokemon, battleResult.Item2);
+                else
+                    FailMessage.ShowMessage(window, Pokemon);
             }
-            else if (Mines > 0)
+            else if (Mines ==1)
             {
                 Content = Mines;
                 Status = SquareStatus.Cleared;
                 Background = Brushes.White;
+                Foreground = Brushes.Blue;
+                BorderBrush = Brushes.White;
+                IsEnabled = false;
+            }
+            else if (Mines == 2)
+            {
+                Content = Mines;
+                Status = SquareStatus.Cleared;
+                Background = Brushes.White;
+                Foreground = Brushes.Green;
+                BorderBrush = Brushes.White;
+                IsEnabled = false;
+            }
+            else if (Mines == 3)
+            {
+                Content = Mines;
+                Status = SquareStatus.Cleared;
+                Background = Brushes.White;
+                Foreground = Brushes.Red;
+                BorderBrush = Brushes.White;
+                IsEnabled = false;
+            }
+            else if (Mines == 4)
+            {
+                Content = Mines;
+                Status = SquareStatus.Cleared;
+                Background = Brushes.White;
+                Foreground= Brushes.DarkBlue;
+                BorderBrush = Brushes.White;
+                IsEnabled = false;
+            }
+            else if (Mines == 5)
+            {
+                Content = Mines;
+                Status = SquareStatus.Cleared;
+                Background = Brushes.White;
+                Foreground = Brushes.DarkRed;
+                BorderBrush = Brushes.White;
+                IsEnabled = false;
+            }
+            else if (Mines == 6)
+            {
+                Content = Mines;
+                Status = SquareStatus.Cleared;
+                Background = Brushes.White;
+                Foreground = Brushes.Teal;
+                BorderBrush = Brushes.White;
+                IsEnabled = false;
+            }
+            else if (Mines == 7)
+            {
+                Content = Mines;
+                Status = SquareStatus.Cleared;
+                Background = Brushes.White;
+                BorderBrush = Brushes.White;
+                IsEnabled = false;
+            }
+            else if (Mines == 8)
+            {
+                Content = Mines;
+                Status = SquareStatus.Cleared;
+                Background = Brushes.White;
+                Foreground = Brushes.Gray;
                 BorderBrush = Brushes.White;
                 IsEnabled = false;
             }

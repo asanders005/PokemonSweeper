@@ -13,6 +13,6 @@
         </Grid.ColumnDefinitions>
         <Image Grid.Column="0" Grid.Row="0" Name="EscapedPokemon" Source="/Game/images/pokemon/001.png" HorizontalAlignment="Center" VerticalAlignment="Center"></Image>
         <TextBlock Name="Message" TextWrapping="Wrap" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-        <Button Name="retry" Grid.Column="1" Grid.Row="1" Width="75" VerticalAlignment="Stretch"  HorizontalAlignment="Right" Click="retry_Click">Retry >></Button>
+        <Button Name="retry" Grid.Column="1" Grid.Row="1" Width="100" VerticalAlignment="Stretch"  HorizontalAlignment="Right" Click="retry_Click">Return to Menu >></Button>
     </Grid>
 </Window>

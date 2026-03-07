@@ -1,0 +1,21 @@
+﻿<Window x:Class="PokemonSweeper.Game.Field.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PokemonSweeper.Game.Field"
+        mc:Ignorable="d"
+        Title="Window1" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+        <Label VerticalAlignment="Center" HorizontalAlignment="Center">Welcome To PokeSweeper</Label>
+        <Button x:Name="Easy" Content="Easy" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Easy_Click" Grid.Row="1" Width="100" ></Button>
+        <Button x:Name="Meduim" Content="Intermediate" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Meduim_Click" Grid.Row="1" Width="100" Margin="0 0 0 10"></Button>
+        <Button x:Name="Hard" Content="Hard" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Hard_Click" Grid.Row="1" Width="100" Margin="0 70 0 0"></Button>
+        <Button x:Name="Box" Content="Box" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Box_Click" Grid.Row="2" Width="100" ></Button>
+    </Grid>
+</Window>

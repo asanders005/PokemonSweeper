@@ -5,27 +5,35 @@ using System.Threading.Tasks;
 using PokemonSweeper;
 using PokemonSweeper.Data;
 using PokemonSweeper.Game.PokemonModels;
+using PokemonSweeper.Services;
 
 namespace PokemonSweeper.Game
 {
     public class PokeSweepGame
     {
-        public PokeSweepGame(DAL dal)
+        public PokeSweepGame(DAL dal, PokemonTeamService teamService, string value)
         {
             _dal = dal;
+            _pokemonTeamService = teamService;
+
             Level = 0;
             Score = 0;
             Pokemon = new List<PlayerPokemon>(); // make empty list of Pokemon captured
+            string difficulty = value;
 
             FieldLevels = new List<FieldLevel>(); // Make list of Game Levels
-            // ------------------------
-            FieldLevels.Add(new FieldLevel {Rows = 9, Columns = 9, Pokemon = 10, NextLevel = 1000});
-            // Beginner standard minesweeper
-            FieldLevels.Add(new FieldLevel {Rows = 16, Columns = 16, Pokemon = 40, NextLevel = 10000});
-            // Intermediate standard minesweeper
-            FieldLevels.Add(new FieldLevel {Rows = 16, Columns = 32, Pokemon = 99, NextLevel = 20000});
-            // Expert standard minesweeper
-            FieldLevels.Add(new FieldLevel {Rows = 16, Columns = 16, Pokemon = 70, NextLevel = 99999999, Open = 50});
+            switch(value){
+                case "easy":
+                    FieldLevels.Add(new FieldLevel {Rows = 9, Columns = 9, Pokemon = 10, NextLevel = 1000});
+                    break;
+                case "intermediate":
+                    FieldLevels.Add(new FieldLevel {Rows = 16, Columns = 16, Pokemon = 40, NextLevel = 10000});
+                    break;
+                case "hard": 
+                    FieldLevels.Add(new FieldLevel {Rows = 16, Columns = 32, Pokemon = 99, NextLevel = 20000});
+                    break;
+            }
+           
         }
 
         public List<FieldLevel> FieldLevels { get; set; }
@@ -49,6 +57,8 @@ namespace PokemonSweeper.Game
 
         public async Task NewField(GameWindow window)
         {
+            if (_pokemonTeamService.CurrentTeam == null) _pokemonTeamService.CurrentTeam = await _dal.LoadPokemonTeamAsync();
+
             window.MineFieldGrid.Children.Clear();
 
             for (var i = Level; Score >= FieldLevels[i].NextLevel && i <= FieldLevels.Count(); i++) Level++;
@@ -61,7 +71,8 @@ namespace PokemonSweeper.Game
                 FieldLevels[Level].Columns,
                 FieldLevels[Level].Pokemon,
                 FieldLevels[Level].Open, window, 
-                _dal);
+                _dal,
+                _pokemonTeamService);
 
             foreach (var square in Field.Squares)
             {
@@ -72,6 +83,7 @@ namespace PokemonSweeper.Game
             window.MinesLeftLabel( FieldLevels[Level].Pokemon );
         }
 
+        private PokemonTeamService _pokemonTeamService;
         private readonly DAL _dal;
     }
 }

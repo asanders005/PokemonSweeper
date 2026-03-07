@@ -15,6 +15,8 @@ namespace PokemonSweeper.Data
     public class DAL
     {
         private readonly IMongoDatabase _database;
+        private static int playerPokemonIdCounter = 1; // This will be used to assign unique IDs to PlayerPokemon instances
+
         public Dictionary<int, string> PokemonMasterList
         {
             get
@@ -33,6 +35,8 @@ namespace PokemonSweeper.Data
             _database = database;
             _ = CreatePokemonMasterList();
             _ = CreateDBPokemonCollection();
+            _ = CreateDBTypeEffectivenessCollection();
+            _ = CreateDBPlayerPokemonCollection();
         }
 
         private async Task CreatePokemonMasterList()
@@ -119,6 +123,52 @@ namespace PokemonSweeper.Data
             }
         }
 
+        private async Task CreateDBTypeEffectivenessCollection()
+        {
+            if (_database != null)
+            {
+                var collectionNames = await _database.ListCollectionNames().ToListAsync();
+                if (collectionNames.Contains("type_effectiveness"))
+                    return;
+                await _database.CreateCollectionAsync("type_effectiveness");
+            }
+            else
+            {
+                string filePath = "save_data/type_effectiveness";
+                if (!System.IO.Directory.Exists(filePath))
+                    System.IO.Directory.CreateDirectory(filePath);
+            }
+        }
+
+        private async Task CreateDBPlayerPokemonCollection()
+        {
+            if (_database != null)
+            {
+                var collectionNames = await _database.ListCollectionNames().ToListAsync();
+                if (collectionNames.Contains("player_pokemon"))
+                {
+                    playerPokemonIdCounter = (await _database.GetCollection<BsonDocument>("player_pokemon").Find(new BsonDocument()).SortByDescending(doc => doc["player_pokemon_id"]).FirstOrDefaultAsync())?["player_pokemon_id"].AsInt32 + 1 ?? 1;
+                    return;
+                }
+                await _database.CreateCollectionAsync("player_pokemon");
+            }
+            else
+            {
+                string filePath = "save_data/player_pokemon";
+                if (!System.IO.Directory.Exists(filePath))
+                    System.IO.Directory.CreateDirectory(filePath);
+                else
+                {
+                    var files = System.IO.Directory.GetFiles(filePath, "*.json");
+                    if (files.Length > 0)
+                    {
+                        var maxId = files.Select(f => int.TryParse(System.IO.Path.GetFileNameWithoutExtension(f), out int id) ? id : 0).Max();
+                        playerPokemonIdCounter = maxId + 1;
+                    }
+                }
+            }
+        }
+
         private async Task<Pokemon> CreatePokemonFromAPI(int dexNum)
         {
             var pokemon = await PokeApiService.GetPokemonByDexNumber(dexNum);
@@ -195,6 +245,78 @@ namespace PokemonSweeper.Data
                 }
             }
             return effectiveness;
+        }
+
+        public async Task SavePlayerPokemonAsync(PlayerPokemon playerPokemon)
+        {
+            if (playerPokemon == null)
+                throw new ArgumentNullException(nameof(playerPokemon));
+
+            if (playerPokemon.PlayerPokemonId == -1)
+                playerPokemon.PlayerPokemonId = playerPokemonIdCounter++;
+
+            if (_database != null)
+            {
+                var collection = _database.GetCollection<BsonDocument>("player_pokemon");
+                var filter = Builders<BsonDocument>.Filter.Eq("player_pokemon_id", playerPokemon.PlayerPokemonId);
+                var updateOptions = new ReplaceOptions { IsUpsert = true };
+                await collection.ReplaceOneAsync(filter, playerPokemon.ToBson(), updateOptions);
+            }
+            else
+            {
+                try
+                {
+                    string filePath = $"save_data/player_pokemon/{playerPokemon.PlayerPokemonId}.json";
+                    string json = JsonSerializer.Serialize(playerPokemon);
+                    if (!System.IO.Directory.Exists("save_data/player_pokemon"))
+                        System.IO.Directory.CreateDirectory("save_data/player_pokemon");
+                    await System.IO.File.WriteAllTextAsync(filePath, json);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error writing PlayerPokemon data to file: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task SavePokemonTeamAsync(PokemonTeam team)
+        {
+            if (_database != null)
+            {
+                var collectionNames = await _database.ListCollectionNames().ToListAsync();
+                if (!collectionNames.Contains("pokemon_teams"))
+                {
+                    await _database.CreateCollectionAsync("pokemon_teams");
+                }
+
+                var teamDoc = team.ToBson();
+                teamDoc["team_id"] = "default";
+
+                await _database.GetCollection<BsonDocument>("pokemon_teams").ReplaceOneAsync(Builders<BsonDocument>.Filter.Eq("team_id", "default"), teamDoc, new ReplaceOptions { IsUpsert = true });
+            }
+            else
+            {
+                string filePath = "save_data/pokemon_team.json";
+                if (!System.IO.Directory.Exists("save_data"))
+                    System.IO.Directory.CreateDirectory("save_data");
+
+                string json = "{";
+
+                for (int i = 0; i < team.Pokemon.Length; i++)
+                {
+                    json += $"\"Pokemon[{i}]\": {team.Pokemon[i].PlayerPokemonId},";
+                }
+                json = json.TrimEnd(',') + "}";
+
+                try
+                {
+                    await System.IO.File.WriteAllTextAsync(filePath, json);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error writing PokemonTeam data to file: {ex.Message}");
+                }
+            }
         }
 
         public async Task<Dictionary<int, string>> GetPokemonMasterListAsync()
@@ -330,6 +452,63 @@ namespace PokemonSweeper.Data
                 }
             }
             return combinedEffectiveness;
+        }
+
+        public async Task<PlayerPokemon> GetPlayerPokemonAsync(int playerPokemonId)
+        {
+            if (_database != null)
+            {
+                var collection = _database.GetCollection<BsonDocument>("player_pokemon");
+                var filter = Builders<BsonDocument>.Filter.Eq("player_pokemon_id", playerPokemonId);
+                var result = await collection.Find(filter).FirstOrDefaultAsync();
+                if (result != null)
+                {
+                    return PlayerPokemon.CreateFromBson(result, this);
+                }
+            }
+            else
+            {
+                string filePath = $"save_data/player_pokemon/{playerPokemonId}.json";
+                if (System.IO.File.Exists(filePath))
+                {
+                    string json = await System.IO.File.ReadAllTextAsync(filePath);
+                    return JsonSerializer.Deserialize<PlayerPokemon>(json);
+                }
+            }
+            return null;
+        }
+
+        public async Task<PokemonTeam> LoadPokemonTeamAsync()
+        {
+            if (_database != null)
+            {
+                var collection = _database.GetCollection<BsonDocument>("pokemon_teams");
+                var teamDoc = await collection.Find(Builders<BsonDocument>.Filter.Eq("team_id", "default")).FirstOrDefaultAsync();
+                if (teamDoc != null)
+                {
+                    return PokemonTeam.FromBson(teamDoc, this);
+                }
+            }
+            else
+            {
+                string filePath = "save_data/pokemon_team.json";
+                if (System.IO.File.Exists(filePath))
+                {
+                    string json = await System.IO.File.ReadAllTextAsync(filePath);
+                    var teamData = JsonSerializer.Deserialize<Dictionary<string, int>>(json);
+                    if (teamData != null)
+                    {
+                        var pokemonIds = teamData.Values.ToArray();
+                        var pokemons = new PlayerPokemon[pokemonIds.Length];
+                        for (int i = 0; i < pokemonIds.Length; i++)
+                        {
+                            pokemons[i] = new PlayerPokemon { Pokemon = await GetPokemonByDexNumAsync(pokemonIds[i]), Level = 1, CurrentHP = 10 };
+                        }
+                        return new PokemonTeam(this) { Pokemon = pokemons };
+                    }
+                }
+            }
+            return new PokemonTeam(this) { Pokemon = new PlayerPokemon[6] };
         }
     }
 }
