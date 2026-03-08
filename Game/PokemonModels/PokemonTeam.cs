@@ -1,14 +1,25 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using PokemonSweeper.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace PokemonSweeper.Game.PokemonModels
 {
     public class PokemonTeam
     {
+        private readonly Random _random = new Random();
+        private readonly DAL _dal;
+
         public PlayerPokemon[] Pokemon { get; set; } = new PlayerPokemon[6];
+
+        public PokemonTeam(DAL dal)
+        {
+            _dal = dal;
+        }
 
         #region Battle Properties
 
@@ -25,9 +36,16 @@ namespace PokemonSweeper.Game.PokemonModels
         /// Function to battle a wild Pokemon.
         /// </summary>
         /// <param name="opponent">The wild Pokemon to battle against.</param>
-        /// <returns>True if the battle was successful, otherwise false.</returns>
-        public bool Battle(PlayerPokemon opponent)
+        /// <returns>A tuple containing a boolean indicating if the player won the battle and a list of the Pokemon that fainted during the battle.</returns>
+        public async Task<(bool, List<PlayerPokemon>)> Battle(PlayerPokemon opponent)
         {
+            if (!HasUsablePokemon)
+            {
+                Console.WriteLine("No usable Pokemon in the team! You lost the battle.");
+                return (false, new List<PlayerPokemon>());
+            }
+
+            List<PlayerPokemon> faintedPokemon = new List<PlayerPokemon>();
             while (HasUsablePokemon && !opponent.IsFainted)
             {
                 bool playerGoesFirst = ActivePokemon.Speed >= opponent.Speed;
@@ -41,9 +59,19 @@ namespace PokemonSweeper.Game.PokemonModels
                     Math.Max(1, ActivePokemon.Attack - opponent.Defense) :
                     Math.Max(1, ActivePokemon.SpecialAttack - opponent.SpecialDefense);
 
+                TypeEffectiveness playerTypeEffectiveness = await _dal.GetTypeEffectivenessAsync(new PokemonType?[] { ActivePokemon.Pokemon.PrimaryType, ActivePokemon.Pokemon.SecondaryType });
+                damageToOpponent = (int)(damageToOpponent * playerTypeEffectiveness.AttackEffectiveness[opponent.Pokemon.PrimaryType] *
+                    (opponent.Pokemon.SecondaryType.HasValue ? playerTypeEffectiveness.AttackEffectiveness[opponent.Pokemon.SecondaryType.Value] : 1f));
+                damageToOpponent += (int)(damageToOpponent * (float)(_random.NextDouble() * 0.2f) - 0.1f); // Add some randomness to the damage (-10% - 10%)
+
                 int damageToPlayer = opponentUsesPhysicalAttack ?
                     Math.Max(1, opponent.Attack - ActivePokemon.Defense) :
                     Math.Max(1, opponent.SpecialAttack - ActivePokemon.SpecialDefense);
+
+                TypeEffectiveness opponentTypeEffectiveness = await _dal.GetTypeEffectivenessAsync(new PokemonType?[] { opponent.Pokemon.PrimaryType, opponent.Pokemon.SecondaryType });
+                damageToPlayer = (int)(damageToPlayer * opponentTypeEffectiveness.AttackEffectiveness[ActivePokemon.Pokemon.PrimaryType] *
+                    (ActivePokemon.Pokemon.SecondaryType.HasValue ? opponentTypeEffectiveness.AttackEffectiveness[ActivePokemon.Pokemon.SecondaryType.Value] : 1f));
+                damageToPlayer += (int)(damageToPlayer * (float)(_random.NextDouble() * 0.2f) - 0.1f); // Add some randomness to the damage (-10% - 10%)
 
                 if (playerGoesFirst)
                 {
@@ -59,11 +87,12 @@ namespace PokemonSweeper.Game.PokemonModels
                 }
                 if (ActivePokemon.IsFainted)
                 {
+                    faintedPokemon.Add(ActivePokemon);
                     Console.WriteLine($"{ActivePokemon.Pokemon.Name} has fainted!");
                     if (!HasUsablePokemon)
                     {
                         Console.WriteLine("All your Pokemon have fainted! You lost the battle.");
-                        return false;
+                        return (false, faintedPokemon);
                     }
                     Console.WriteLine($"Switching to {ActivePokemon.Pokemon.Name}.");
                     NextPokemon();
@@ -71,7 +100,7 @@ namespace PokemonSweeper.Game.PokemonModels
 
             }
 
-            return true;
+            return (true, faintedPokemon);
         }
 
         /// <summary>
@@ -129,6 +158,35 @@ namespace PokemonSweeper.Game.PokemonModels
                 if (pokemon != null)
                     pokemon.ResetHP();
             }
+        }
+
+        #endregion
+
+        #region Data Methods
+
+        public BsonDocument ToBson()
+        {
+            var doc = new BsonDocument();
+            for (int i = 0; i < Pokemon.Length; i++)
+            {
+                if (Pokemon[i] != null)
+                    doc.Add($"Pokemon{i}", Pokemon[i].PlayerPokemonId);
+            }
+            return doc;
+        }
+
+        public static PokemonTeam FromBson(BsonDocument doc, DAL dal)
+        {
+            var team = new PokemonTeam(dal);
+            for (int i = 0; i < 6; i++)
+            {
+                if (doc.Contains($"Pokemon{i}"))
+                {
+                    var playerPokemonId = doc[$"Pokemon{i}"].AsInt32;
+                    team.Pokemon[i] = dal.GetPlayerPokemonAsync(playerPokemonId).Result;
+                }
+            }
+            return team;
         }
 
         #endregion

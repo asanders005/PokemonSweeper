@@ -13,6 +13,8 @@ namespace PokemonSweeper.Game.PokemonModels
     {
         #region Pokemon Properties
 
+        public int PlayerPokemonId { get; set; } = -1; // This will be set when the Pokemon is added to the player's database record
+
         public Pokemon Pokemon { get; set; }
         public int Level { get; set; }
         public int Experience { get; set; } = 0;
