@@ -23,13 +23,25 @@ public partial class PokemonDetails : Window
         
         PokemonName.Content = char.ToUpper(p.Name[0]) + p.Name[1..];
         
-        PokemonType.Content = CurrentPlayerPokemon.Pokemon.PrimaryType;
-        if (CurrentPlayerPokemon.Pokemon.SecondaryType != null) PokemonType.Content += ", "+CurrentPlayerPokemon.Pokemon.SecondaryType;
-
         PokemonImage.Source = new BitmapImage(new System.Uri(p.DefaultSprite));;
+        
+        PokemonType.Content = p.PrimaryType+" Type";
+        if (p.SecondaryType != null) PokemonType.Content += ", "+p.SecondaryType+" Type";
+
+        PokemonHP.Content = "HP: " + p.BaseStats[PokemonStatsType.HP];
+        PokemonAttack.Content = "Attack: " + p.BaseStats[PokemonStatsType.Attack];
+        PokemonDefense.Content = "Defense: " + p.BaseStats[PokemonStatsType.Defense];
+        PokemonSpAttack.Content = "Sp. Attack: " + p.BaseStats[PokemonStatsType.SpecialAttack];
+        PokemonSpDefense.Content = "Sp. Defense: " + p.BaseStats[PokemonStatsType.SpecialDefense];
+        PokemonSpeed.Content = "Speed: " + p.BaseStats[PokemonStatsType.Speed];
+    }
+
+    private void BackClick(object sender, RoutedEventArgs e)
+    {
+        Close();
     }
     
-    private void Window_Loaded(object sender, RoutedEventArgs e)
+    private void WindowLoaded(object sender, RoutedEventArgs e)
     {
         SetPokemon();
     }

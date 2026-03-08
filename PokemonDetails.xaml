@@ -5,21 +5,39 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:PokemonSweeper"
         mc:Ignorable="d"
-        Loaded="Window_Loaded"
-        Title="Pokemon Details" Width="527.957" Height="609.678">
-    <DockPanel>
-        <Label Name="PokemonName" HorizontalContentAlignment="Center" Content="Name" FontSize="40" Height="100" VerticalContentAlignment="Bottom" HorizontalAlignment="Center" Margin="10" DockPanel.Dock="Top"/>
-        <Image Name="PokemonImage" VerticalAlignment="Top" Width="100" Source="images/pokeball.png" Margin="50 0 0 0" DockPanel.Dock="Left"/>
-        <DockPanel Margin="50 0 0 0" HorizontalAlignment="Left">
-            <Label Name="PokemonType" Content="Type" FontSize="20" VerticalContentAlignment="Top"/>
-            <DockPanel>
-                <Label Name="PokemonHP" HorizontalContentAlignment="Center" Content="HP: 100" FontSize="20" VerticalContentAlignment="Top" HorizontalAlignment="Left"/>
-                <Label Name="PokemonAttack" HorizontalContentAlignment="Center" Content="Attack: 100" FontSize="20" VerticalContentAlignment="Top" HorizontalAlignment="Left"/>
-            </DockPanel>
-            <DockPanel>
-                <Label Name="PokemonSpAttack" HorizontalContentAlignment="Center" Content="Sp. Attack: 100" FontSize="20" VerticalContentAlignment="Top" HorizontalAlignment="Center"/>
-                <Label Name="PokemonSpDefense" HorizontalContentAlignment="Center" Content="Sp. Defense: 100" FontSize="20" VerticalContentAlignment="Top" HorizontalAlignment="Center"/>
-            </DockPanel>
+        Loaded="WindowLoaded"
+        Title="Pokemon Details" Width="500" Height="400">
+    <Grid ShowGridLines="False">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Name="PokemonName" HorizontalContentAlignment="Center" Content="Name" FontSize="40" Height="100" VerticalContentAlignment="Bottom" HorizontalAlignment="Center" Margin="10"/>
+        <DockPanel Grid.Row="1">
+            <Image Name="PokemonImage" VerticalAlignment="Center" Width="150" Source="images/pokeball.png" Margin="10 0 10 0" DockPanel.Dock="Left"/>
+            <Label Name="PokemonType" Content="Type" FontSize="20" VerticalContentAlignment="Top" DockPanel.Dock="Top"/>
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Name="PokemonHP" Content="HP: 100" FontSize="20" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"/>
+                <Label Grid.Row="1" Grid.Column="0" Name="PokemonAttack" Content="Attack: 100" FontSize="20" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"/>
+                <Label Grid.Row="2" Grid.Column="0" Name="PokemonDefense" Content="Attack: 100" FontSize="20" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"/>
+                <Label Grid.Row="0" Grid.Column="1" Name="PokemonSpAttack" Content="Sp. Attack: 100" FontSize="20" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"/>
+                <Label Grid.Row="1" Grid.Column="1" Name="PokemonSpDefense" Content="Sp. Defense: 100" FontSize="20" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"/>
+                <Label Grid.Row="2" Grid.Column="1" Name="PokemonSpeed" Content="Attack: 100" FontSize="20" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Top"/>
+            </Grid>
         </DockPanel>
-    </DockPanel>
+        <Button Grid.Row="2" Name="BackButton" Click="BackClick" Content="Back" FontSize="20" Width="100" Height="30" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10 10 10 10"/>
+    </Grid>
 </Window>
