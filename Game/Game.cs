@@ -21,22 +21,24 @@ namespace PokemonSweeper.Game
             Pokemon = new List<PlayerPokemon>(); // make empty list of Pokemon captured
             string difficulty = value;
 
-            FieldLevels = new List<FieldLevel>(); // Make list of Game Levels
             switch(value){
                 case "easy":
-                    FieldLevels.Add(new FieldLevel {Rows = 9, Columns = 9, Pokemon = 10, NextLevel = 1000});
+                    FieldLevel = new FieldLevel {Rows = 9, Columns = 9, Pokemon = 10, NextLevel = 1000};
+                    Level = 0;
                     break;
                 case "intermediate":
-                    FieldLevels.Add(new FieldLevel {Rows = 16, Columns = 16, Pokemon = 40, NextLevel = 10000});
+                    FieldLevel = new FieldLevel {Rows = 16, Columns = 16, Pokemon = 40, NextLevel = 10000};
+                    Level = 1;
                     break;
                 case "hard": 
-                    FieldLevels.Add(new FieldLevel {Rows = 16, Columns = 32, Pokemon = 99, NextLevel = 20000});
+                    FieldLevel =new FieldLevel {Rows = 16, Columns = 32, Pokemon = 99, NextLevel = 20000};
+                    Level = 2;
                     break;
             }
            
         }
 
-        public List<FieldLevel> FieldLevels { get; set; }
+        public FieldLevel FieldLevel { get; set; }
         public int Score { get; set; }
         public List<PlayerPokemon> Pokemon { get; set; }
         public int Level { get; set; }
@@ -62,15 +64,15 @@ namespace PokemonSweeper.Game
             window.MineFieldGrid.Children.Clear();
 
             //for (var i = Level; Score >= FieldLevels[i].NextLevel && i <= FieldLevels.Count(); i++) Level++;
-            window.MineFieldGrid.Rows = FieldLevels[Level].Rows;
-            window.MineFieldGrid.Columns = FieldLevels[Level].Columns;
-            window.Width = 600*FieldLevels[Level].Columns/FieldLevels[Level].Rows;
-            window.MineFieldGrid.Width = 500*FieldLevels[Level].Columns/FieldLevels[Level].Rows;
+            window.MineFieldGrid.Rows = FieldLevel.Rows;
+            window.MineFieldGrid.Columns = FieldLevel.Columns;
+            window.Width = 600*FieldLevel.Columns/FieldLevel.Rows;
+            window.MineFieldGrid.Width = 500*FieldLevel.Columns/FieldLevel.Rows;
             Field = await PokemonSweeper.Field.CreateAsync(
-                FieldLevels[Level].Rows, 
-                FieldLevels[Level].Columns,
-                FieldLevels[Level].Pokemon,
-                FieldLevels[Level].Open, window, 
+                FieldLevel.Rows, 
+                FieldLevel.Columns,
+                FieldLevel.Pokemon,
+                FieldLevel.Open, window, 
                 _dal,
                 _pokemonTeamService);
 
@@ -80,7 +82,7 @@ namespace PokemonSweeper.Game
                 square.MouseRightButtonDown += window.MineSquare_MouseRightButtonDown;
                 window.MineFieldGrid.Children.Add(square);
             }
-            window.MinesLeftLabel( FieldLevels[Level].Pokemon );
+            window.MinesLeftLabel( FieldLevel.Pokemon );
         }
 
         private PokemonTeamService _pokemonTeamService;

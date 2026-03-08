@@ -37,9 +37,9 @@ namespace PokemonSweeper.Game.Messages
 
             Winner._maxSelectablePokemon = sender.Game.Level switch
             {
-                1 => 2,
-                2 => 3,
-                3 => 4,
+                0 => 2,
+                1 => 3,
+                2 => 4,
                 _ => Winner._maxSelectablePokemon
             };
             Winner.SelectionInfo.Text = $"Select up to {Winner._maxSelectablePokemon} Pokemon to save to your PC.";
