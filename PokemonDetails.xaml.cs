@@ -1,3 +1,4 @@
+#nullable enable
 using System.Windows;
 using System.Windows.Media.Imaging;
 using PokemonSweeper.Data;
@@ -18,12 +19,12 @@ public partial class PokemonDetails : Window
 
     private async void SetPokemon()
     {
-        CurrentPlayerPokemon = await PlayerPokemon.CreateWithRandomStats(Dal);
+        CurrentPlayerPokemon ??= await PlayerPokemon.CreateWithRandomStats(Dal);
         var p = CurrentPlayerPokemon.Pokemon;
         
         PokemonName.Content = char.ToUpper(p.Name[0]) + p.Name[1..];
         
-        PokemonImage.Source = new BitmapImage(new System.Uri(p.DefaultSprite));;
+        PokemonImage.Source = new BitmapImage(new System.Uri(p.DefaultSprite));
         
         PokemonType.Content = p.PrimaryType+" Type";
         if (p.SecondaryType != null) PokemonType.Content += ", "+p.SecondaryType+" Type";

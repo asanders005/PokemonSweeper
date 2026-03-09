@@ -15,6 +15,40 @@ namespace PokemonSweeper
     public partial class App : Application
     {
         public static ServiceProvider ServiceProvider { get; private set; } = null!;
+        
+        private void Test_Startup(object sender, StartupEventArgs e)
+        {
+            var configuration = new ConfigurationBuilder()
+                .AddUserSecrets<App>(optional: true)
+                .Build();
+
+            var services = new ServiceCollection();
+
+            // Register configuration
+            services.AddSingleton<IConfiguration>(configuration);
+
+            // Register MongoDB only if a connection string is provided 
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                services.AddSingleton<IMongoClient>(new MongoClient(connectionString));
+                services.AddSingleton<IMongoDatabase>(sp =>
+                {
+                    var client = sp.GetRequiredService<IMongoClient>();
+                    return client.GetDatabase("Pokemon");
+                });
+            }
+
+            // Register application services
+            services.AddSingleton<PokemonTeamService>();
+            services.AddSingleton<DAL>();
+            services.AddTransient<PokemonPC>();
+
+            ServiceProvider = services.BuildServiceProvider();
+
+            var mainWindow = ServiceProvider.GetRequiredService<PokemonPC>();
+            mainWindow.Show();
+        }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
