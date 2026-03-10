@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PokemonSweeper.Data;
+using PokemonSweeper.Services;
 
 namespace PokemonSweeper.Game.Field
 {
@@ -21,12 +22,19 @@ namespace PokemonSweeper.Game.Field
     public partial class MainMenu : Window
     {
         Data.DAL dal= new Data.DAL();
+        Game.PokemonModels.PokemonTeam team = null;
         public MainMenu()
         {
             InitializeComponent();
         }
+        public MainMenu(DAL dal, Game.PokemonModels.PokemonTeam team)
+        {
+            InitializeComponent();
+            this.dal = dal;
+            this.team = team;
+        }
 
-            private void Easy_Click(object sender, RoutedEventArgs e)
+        private void Easy_Click(object sender, RoutedEventArgs e)
             {
             
             GameWindow game =new GameWindow(dal, new Services.PokemonTeamService(dal),"easy");
@@ -52,7 +60,8 @@ namespace PokemonSweeper.Game.Field
 
         private void Box_Click(object sender, RoutedEventArgs e)
         {
-
+            PokemonPC pc = new PokemonPC(dal);
+            pc.Show();
         }
     }
     }
