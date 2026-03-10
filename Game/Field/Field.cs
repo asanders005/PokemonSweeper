@@ -46,6 +46,7 @@ namespace PokemonSweeper
         {
             var pokemonPlacers = new List<int>();
 
+            int averageLevel = teamService.CurrentTeam.AverageLevel;
 
             int pokemonLocation;
             for (var i = 0; i < nrOfPokemon; i++)
@@ -64,7 +65,7 @@ namespace PokemonSweeper
                     Squares.Add(new Square(this, Rows, Columns, row, column, teamService, _dal));
                     if (pokemonPlacers.Contains(Squares.Count - 1))
                     {
-                        Squares[Squares.Count - 1].Pokemon = await PlayerPokemon.CreateWithRandomStats(_dal);
+                        Squares[Squares.Count - 1].Pokemon = await PlayerPokemon.CreateWithRandomStats(_dal, averageLevel);
                     }
                 }
             }
@@ -77,7 +78,7 @@ namespace PokemonSweeper
                 } while (pokemonPlacers.Contains(openLocation) ||
                          Squares[openLocation].Status == Square.SquareStatus.Cleared);
                 Squares[openLocation].Status = Square.SquareStatus.Cleared;
-                Squares[openLocation].SwipeSquare(window);
+                await Squares[openLocation].SwipeSquare(window);
             }
         }
     }
