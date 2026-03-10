@@ -76,7 +76,9 @@ namespace PokemonSweeper.Game.PokemonModels
             int expForNextLevel = CalculateExpForLevel(Level + 1);
             if (Experience >= expForNextLevel)
             {
+                int prevMaxHP = MaxHP;
                 Level++;
+                CurrentHP += MaxHP - prevMaxHP; // Increase current HP by the amount max HP increased
                 CheckLevelUp(); // Check for multiple level-ups
             }
         }
@@ -152,6 +154,7 @@ namespace PokemonSweeper.Game.PokemonModels
 
                 statIndex++;
             }
+            ResetHP(); // Set current HP to max HP after generating stats
         }
 
         public static PlayerPokemon CreateFromBson(BsonDocument bsonDoc, DAL dal)
@@ -178,6 +181,8 @@ namespace PokemonSweeper.Game.PokemonModels
                     };
                 }
             }
+
+            pokemon.ResetHP(); // Set current HP to max HP after loading stats
             return pokemon;
         }
 

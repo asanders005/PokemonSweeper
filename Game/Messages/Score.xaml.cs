@@ -15,25 +15,30 @@ namespace PokemonSweeper.Game.Messages
         private int _maxSelectablePokemon = 2;
         private DAL _dal;
 
-        public Score(DAL dal)
+        public Score(PokemonTeam pokemonTeam, DAL dal)
         {
             _dal = dal;
             InitializeComponent();
         }
 
-        public static void ShowScore(GameWindow sender, PokemonSweeper.Field Field, DAL dal)
+        public static async void ShowScore(GameWindow sender, PokemonSweeper.Field Field, PokemonTeam pokemonTeam, DAL dal)
         {
             Field.Timer.Stop();
             var PokeList = new List<PlayerPokemon>();
-            var Winner = new Score(dal);
+            var Winner = new Score(pokemonTeam, dal);
 
-            foreach (var square in Field.Squares.Where(s => s.Pokemon != null))
+            foreach (var square in Field.Squares.Where(s => s.Pokemon != null && !s.Pokemon.IsFainted))
             {
                 Winner.ListBoxPokemon.Items.Add(square.Pokemon);
                 PokeList.Add(square.Pokemon);
             }
+
+            int expGain = pokemonTeam.AwardExpToTeam(PokeList);
+
+            await pokemonTeam.SaveTeam();
+
             var newScore = sender.Game.CalculateNewScore(Field.Timer, Field.NrOfClicks, PokeList);
-            Winner.score.Text = "Good job! You caught all the Pokemon!! Your score is " + newScore;
+            Winner.score.Text = "Good job! You caught all the Pokemon!! Your Non-fainted Pokemon have earned " + expGain + " experience points each! Your score is " + newScore;
 
             Winner._maxSelectablePokemon = sender.Game.Level switch
             {

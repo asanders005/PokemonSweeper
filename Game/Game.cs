@@ -59,7 +59,29 @@ namespace PokemonSweeper.Game
 
         public async Task NewField(GameWindow window)
         {
+            /* Temp functionality for testing
+            //if (_pokemonTeamService.CurrentTeam == null)
+            //{
+            //    PlayerPokemon[] playerPokemons = new PlayerPokemon[]
+            //    {
+            //        await _dal.GetPlayerPokemonAsync(6),
+            //        await _dal.GetPlayerPokemonAsync(7),
+            //        await _dal.GetPlayerPokemonAsync(2),
+            //        await _dal.GetPlayerPokemonAsync(5),
+            //        null,
+            //        null
+            //    };
+
+            //    _pokemonTeamService.CurrentTeam = new PokemonTeam(_dal)
+            //    {
+            //        Pokemon = playerPokemons
+            //    };
+            //} */
+
+            // Actual functionality for loading the team, if it is not already loaded. This should be the case when starting a new game, but not when going to the next level.
             if (_pokemonTeamService.CurrentTeam == null) _pokemonTeamService.CurrentTeam = await _dal.LoadPokemonTeamAsync();
+
+            _pokemonTeamService.CurrentTeam.RestTeam();
 
             window.MineFieldGrid.Children.Clear();
 

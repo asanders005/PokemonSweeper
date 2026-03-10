@@ -2,6 +2,7 @@
 using PokemonSweeper.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -22,6 +23,8 @@ namespace PokemonSweeper.Game.PokemonModels
         }
 
         #region Battle Properties
+
+        public int AverageLevel => Pokemon.Where(p => p != null).Select(p => p.Level).DefaultIfEmpty(1).Average() is double avgLevel ? (int)avgLevel : 1;
 
         public PlayerPokemon ActivePokemon { get => Pokemon[ActivePokemonIndex]; }
         public int ActivePokemonIndex { get; set; }
@@ -55,23 +58,9 @@ namespace PokemonSweeper.Game.PokemonModels
                 bool opponentUsesPhysicalAttack = (opponent.Attack == opponent.SpecialAttack) ?
                     ActivePokemon.Defense < ActivePokemon.SpecialDefense : opponent.Attack > opponent.SpecialAttack;
 
-                int damageToOpponent = playerUsesPhysicalAttack ?
-                    Math.Max(1, ActivePokemon.Attack - opponent.Defense) :
-                    Math.Max(1, ActivePokemon.SpecialAttack - opponent.SpecialDefense);
+                int damageToOpponent = await CalculateDamage(ActivePokemon, opponent, playerUsesPhysicalAttack);
 
-                TypeEffectiveness playerTypeEffectiveness = await _dal.GetTypeEffectivenessAsync(new PokemonType?[] { ActivePokemon.Pokemon.PrimaryType, ActivePokemon.Pokemon.SecondaryType });
-                damageToOpponent = (int)(damageToOpponent * playerTypeEffectiveness.AttackEffectiveness[opponent.Pokemon.PrimaryType] *
-                    (opponent.Pokemon.SecondaryType.HasValue ? playerTypeEffectiveness.AttackEffectiveness[opponent.Pokemon.SecondaryType.Value] : 1f));
-                damageToOpponent += (int)(damageToOpponent * (float)(_random.NextDouble() * 0.2f) - 0.1f); // Add some randomness to the damage (-10% - 10%)
-
-                int damageToPlayer = opponentUsesPhysicalAttack ?
-                    Math.Max(1, opponent.Attack - ActivePokemon.Defense) :
-                    Math.Max(1, opponent.SpecialAttack - ActivePokemon.SpecialDefense);
-
-                TypeEffectiveness opponentTypeEffectiveness = await _dal.GetTypeEffectivenessAsync(new PokemonType?[] { opponent.Pokemon.PrimaryType, opponent.Pokemon.SecondaryType });
-                damageToPlayer = (int)(damageToPlayer * opponentTypeEffectiveness.AttackEffectiveness[ActivePokemon.Pokemon.PrimaryType] *
-                    (ActivePokemon.Pokemon.SecondaryType.HasValue ? opponentTypeEffectiveness.AttackEffectiveness[ActivePokemon.Pokemon.SecondaryType.Value] : 1f));
-                damageToPlayer += (int)(damageToPlayer * (float)(_random.NextDouble() * 0.2f) - 0.1f); // Add some randomness to the damage (-10% - 10%)
+                int damageToPlayer = await CalculateDamage(opponent, ActivePokemon, opponentUsesPhysicalAttack);
 
                 if (playerGoesFirst)
                 {
@@ -94,13 +83,34 @@ namespace PokemonSweeper.Game.PokemonModels
                         Console.WriteLine("All your Pokemon have fainted! You lost the battle.");
                         return (false, faintedPokemon);
                     }
-                    Console.WriteLine($"Switching to {ActivePokemon.Pokemon.Name}.");
                     NextPokemon();
+                    Console.WriteLine($"Switching to {ActivePokemon.Pokemon.Name}.");
                 }
 
             }
 
             return (true, faintedPokemon);
+        }
+
+        /// <summary>
+        /// Calculates the damage dealt by the attacker to the defender based on their stats, the type effectiveness of the attack, and a random factor.
+        /// </summary>
+        /// <param name="attacker">The attacking Pokemon.</param>
+        /// <param name="defender">The defending Pokemon.</param>
+        /// <param name="isPhysical">Indicates whether the attack is physical or special.</param>
+        /// <returns>The calculated damage as an integer.</returns>
+        private async Task<int> CalculateDamage(PlayerPokemon attacker, PlayerPokemon defender, bool isPhysical)
+        {
+            int critical = _random.NextDouble() < 0.0625 ? 2 : 1; // 6.25% chance for a critical hit
+            float statsModifier = isPhysical ? (float)attacker.Attack / defender.Defense : (float)attacker.SpecialAttack / defender.SpecialDefense;
+            int baseDamage = (int)((((((2 * attacker.Level * critical) / 5) + 2) * statsModifier) / 50) + 2);
+
+            TypeEffectiveness attackTypeEffectiveness = await _dal.GetTypeEffectivenessAsync(new PokemonType?[] { attacker.Pokemon.PrimaryType, attacker.Pokemon.SecondaryType });
+            int typeModifiedDamage = (int)Math.Round(baseDamage * attackTypeEffectiveness.AttackEffectiveness[defender.Pokemon.PrimaryType] *
+                (defender.Pokemon.SecondaryType.HasValue ? attackTypeEffectiveness.AttackEffectiveness[defender.Pokemon.SecondaryType.Value] : 1f));
+
+            float randomFactor = typeModifiedDamage > 1 ? _random.Next(217, 256) / 255f : 1f; // Random factor between 0.85 and 1.00
+            return (int)Math.Round(typeModifiedDamage * randomFactor); // Apply the random factor to the damage
         }
 
         /// <summary>
@@ -158,6 +168,29 @@ namespace PokemonSweeper.Game.PokemonModels
                 if (pokemon != null)
                     pokemon.ResetHP();
             }
+            ActivePokemonIndex = 0;
+        }
+
+        /// <summary>
+        /// Grants experience points to all Pokemon in the team based on the experience yield of the defeated opponent Pokemon. 
+        /// The experience gain is divided equally among all non-fainted Pokemon in the team.
+        /// Used after successfully clearing a minesweeper board to reward the player's team for their victory.
+        /// </summary>
+        /// <param name="pokemons">The list of defeated opponent Pokemon.</param>
+        /// <returns>The amount of experience points awarded to each Pokemon in the team.</returns>
+        public int AwardExpToTeam(IEnumerable<PlayerPokemon> pokemons)
+        {
+            int awakePokemonCount = Pokemon.Count(p => p != null && !p.IsFainted);
+            if (awakePokemonCount == 0)
+                return 0;
+
+            var expGain = pokemons.Sum(p => p.CalculateExpYield()) / awakePokemonCount;
+            foreach (var pokemon in Pokemon)
+            {
+                if (pokemon != null && !pokemon.IsFainted)
+                    pokemon.GrantBattleRewards(expGain, new Dictionary<PokemonStatsType, int>());
+            }
+            return expGain;
         }
 
         #endregion
@@ -187,6 +220,15 @@ namespace PokemonSweeper.Game.PokemonModels
                 }
             }
             return team;
+        }
+
+        public async Task SaveTeam()
+        {
+            foreach (var pokemon in Pokemon)
+            {
+                if (pokemon != null)
+                    await _dal.SavePlayerPokemonAsync(pokemon);
+            }
         }
 
         #endregion
