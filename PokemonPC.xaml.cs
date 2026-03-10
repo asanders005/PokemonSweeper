@@ -63,6 +63,15 @@ public partial class PokemonPC : Window
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Width = 50
             };
+
+            void DetailsOpen()
+            {
+                PokemonDetails details = new PokemonDetails(Dal);
+                details.CurrentPlayerPokemon = pokemon;
+                details.Show();
+            }
+
+            button.Click += (_, _) => DetailsOpen();
             
             Grid.SetColumn(button, j%3);
             Grid.SetRow(button, j/3);
