@@ -1,5 +1,7 @@
 ﻿using PokemonSweeper.Data;
+using PokemonSweeper.Game.Field;
 using PokemonSweeper.Game.PokemonModels;
+using PokemonSweeper.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,10 +16,12 @@ namespace PokemonSweeper.Game.Messages
     {
         private int _maxSelectablePokemon = 2;
         private DAL _dal;
+        private PokemonTeam _team;
 
         public Score(PokemonTeam pokemonTeam, DAL dal)
         {
             _dal = dal;
+            _team = pokemonTeam;
             InitializeComponent();
         }
 
@@ -82,7 +86,8 @@ namespace PokemonSweeper.Game.Messages
         {
             await SavePokemon();
 
-            // TODO: Return to main menu
+            MainMenu main=new MainMenu(_dal,_team);
+            main.Show();
             Close();
         }
 
