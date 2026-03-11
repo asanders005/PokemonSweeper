@@ -53,8 +53,6 @@ After clearing a board, you may **keep Pokémon discovered during the run**.
 
 Captured Pokémon are stored in your **Pokémon Box**.
 
----
-
 ## Pokémon Box & Team Building
 
 The **Pokémon Box** allows you to:
@@ -64,8 +62,6 @@ The **Pokémon Box** allows you to:
 - Assemble a **battle team**
 
 When starting a game with a team assembled, your Pokémon will automatically battle wild encounters.
-
----
 
 ## Battle System
 
@@ -77,8 +73,6 @@ The battle system implements several mechanics from the Pokémon games:
 - **Natures**
 
 Evolution is **not currently implemented**.
-
----
 
 ## Dynamic Pokémon Support
 
@@ -122,8 +116,6 @@ The entire game is controlled using the **mouse**.
 
 The project expands a classic Minesweeper implementation into a small game system with persistent player data, battle mechanics, and dynamic Pokémon support. The architecture is designed to keep gameplay logic, data persistence, and external integrations loosely coupled.
 
----
-
 ## High-Level Architecture
 
 The game is composed of several core systems:
@@ -163,8 +155,6 @@ PokeAPI Integration
 Pokémon Data Loader
 +----------------------+
 
----
-
 ## Game Board System
 
 The board system manages core Minesweeper gameplay.
@@ -189,13 +179,13 @@ When a tile is revealed, the system determines whether it contains:
 - A numbered hint
 - A Pokémon encounter
 
----
-
 ## Battle System
 
 When a player reveals a tile containing a Pokémon, the battle system is triggered.
 
 ### Battle Flow
+
+The battle flows automatically. After the battle is finished, the player is informed of the results.
 
 1. The wild Pokémon is revealed.
 2. The player's active team enters battle.
@@ -214,8 +204,6 @@ The battle system includes several core Pokémon mechanics:
 
 Evolution is **not currently implemented**.
 
----
-
 ## Pokémon Data Integration
 
 Pokémon data is retrieved dynamically using **PokeAPI**.
@@ -229,8 +217,6 @@ This allows the game to support:
 - Consistent stat and species data
 
 Pokémon information such as species data, base stats, and identifiers are fetched from the API and used to generate battle-ready Pokémon objects within the game.
-
----
 
 ## Data Persistence Layer
 
@@ -269,8 +255,6 @@ These JSON files persist:
 
 This allows the game to run without requiring any external services.
 
----
-
 ## Storage Abstraction
 
 The persistence system uses a storage abstraction that separates game logic from the storage implementation.
@@ -283,8 +267,6 @@ Benefits include:
 
 The game logic interacts only with the abstraction layer, while the concrete storage implementations handle serialization and database operations.
 
----
-
 ## System Design Goals
 
 The architecture was designed with several goals in mind:
@@ -294,13 +276,9 @@ The architecture was designed with several goals in mind:
 - **Data portability** – save data works both locally and in a database
 - **Future-proofing** – PokeAPI integration allows new Pokémon to work automatically
 
----
-
 # Key Engineering Challenges
 
 This project required solving several design challenges in order to extend a simple Minesweeper clone into a more complex system involving persistent game data, external APIs, and RPG-style battle mechanics.
-
----
 
 ## Integrating Pokémon Battles into a Minesweeper Game
 
@@ -315,8 +293,6 @@ Instead of ending the game immediately when encountering a Pokémon, the system 
 
 This approach preserves the core Minesweeper experience while adding strategic depth through team composition and Pokémon stats.
 
----
-
 ## Supporting All Pokémon Dynamically
 
 Rather than hardcoding Pokémon data, the project integrates with **PokeAPI** to retrieve species information.
@@ -328,8 +304,6 @@ Advantages of this approach include:
 - Reduced maintenance requirements for the project
 
 The game dynamically generates Pokémon instances using API-provided species data combined with internally generated battle attributes such as IVs, EVs, and natures.
-
----
 
 ## Implementing a Simplified Pokémon Stat System
 
@@ -343,8 +317,6 @@ Implemented mechanics include:
 - **Natures**
 
 These mechanics provide meaningful stat variation between Pokémon while avoiding the complexity of a full Pokémon battle simulator.
-
----
 
 ## Dual Persistence System
 
@@ -363,8 +335,6 @@ This allows the game to run in multiple environments:
 | Cloud / multi-device setups | MongoDB |
 
 The persistence layer is abstracted so that gameplay systems do not depend on a specific storage implementation.
-
----
 
 ## Designing for Extensibility
 
@@ -428,6 +398,8 @@ These JSON files store:
 
 This option requires no configuration and works automatically.
 
+---
+
 # Gameplay Loop
 
 1. Select a difficulty from the main menu
@@ -437,6 +409,8 @@ This option requires no configuration and works automatically.
 5. Choose 2–4 Pokémon to keep (Depends on Difficulty)
 6. Manage your team in the Pokémon Box
 7. Start another run
+
+---
 
 # Building the Project
 ## Requirements
@@ -453,12 +427,17 @@ dotnet build
 ```bash
 dotnet run
 ```
+
+---
+
 # Credits
 
 Original project:
 
 switch87 — Pokemon Sweeper
 https://github.com/switch87/pokemon-sweeper
+
+---
 
 # Future Improvements
 
@@ -468,6 +447,8 @@ Possible future features:
 - Additional board types
 - UI improvements
 - Expanded save features
+
+---
 
 # License
 
