@@ -42,7 +42,8 @@ namespace PokemonSweeper.Game.Messages
             await pokemonTeam.CurrentTeam.SaveTeam();
 
             var newScore = sender.Game.CalculateNewScore(Field.Timer, Field.NrOfClicks, PokeList);
-            Winner.score.Text = "Good job! You caught all the Pokemon!! Your Non-fainted Pokemon have earned " + expGain + " experience points each! Your score is " + newScore;
+            Winner.title.Text = "Good job! You caught all the Pokemon!!";
+            Winner.score.Text = $"Your Non-fainted Pokemon have earned {expGain} experience points each! Your score is {newScore}";
 
             Winner._maxSelectablePokemon = sender.Game.Level switch
             {

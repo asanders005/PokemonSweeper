@@ -26,6 +26,8 @@ public partial class PokemonDetails : Window
         
         PokemonImage.Source = new BitmapImage(new System.Uri(p.DefaultSprite));
         
+        PokemonLevel.Content = "Level "+CurrentPlayerPokemon.Level;
+        
         PokemonType.Content = p.PrimaryType+" Type";
         if (p.SecondaryType != null) PokemonType.Content += ", "+p.SecondaryType+" Type";
 

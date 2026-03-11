@@ -16,9 +16,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Name="PokemonName" HorizontalContentAlignment="Center" Content="Name" FontSize="40" Height="100" VerticalContentAlignment="Bottom" HorizontalAlignment="Center" Margin="10"/>
+        <Label Grid.Row="0" Name="PokemonName" HorizontalContentAlignment="Center" Content="Name" FontSize="40" Height="80" VerticalContentAlignment="Bottom" HorizontalAlignment="Center"/>
         <DockPanel Grid.Row="1">
             <Image Name="PokemonImage" RenderOptions.BitmapScalingMode="NearestNeighbor" VerticalAlignment="Center" Width="150" Source="images/pokeball.png" Margin="10 0 10 0" DockPanel.Dock="Left"/>
+            <Label Name="PokemonLevel" Content="Level 1" FontSize="20" VerticalContentAlignment="Top" DockPanel.Dock="Top"/>
             <Label Name="PokemonType" Content="Type" FontSize="20" VerticalContentAlignment="Top" DockPanel.Dock="Top"/>
             <Grid DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
