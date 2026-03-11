@@ -51,11 +51,20 @@ namespace PokemonSweeper.Game.PokemonModels
 
         #region Battle Methods
 
+        /// <summary>
+        /// Resets the current HP of the PlayerPokemon to its maximum HP. 
+        /// This should be called after generating random stats or loading from the database to ensure the Pokemon starts with full health.
+        /// </summary>
         public void ResetHP()
         {
             CurrentHP = MaxHP;
         }
 
+        /// <summary>
+        /// Grants experience points and EVs to the PlayerPokemon after a battle.
+        /// </summary>
+        /// <param name="expGained">The amount of experience points gained.</param>
+        /// <param name="evsGained">A dictionary containing the EVs gained for each stat.</param>
         public void GrantBattleRewards(int expGained, Dictionary<PokemonStatsType, int> evsGained)
         {
             Experience += expGained;
@@ -71,6 +80,9 @@ namespace PokemonSweeper.Game.PokemonModels
             }
         }
 
+        /// <summary>
+        /// Checks if the PlayerPokemon has enough experience to level up, and if so, increases the level and updates the current HP accordingly.
+        /// </summary>
         private void CheckLevelUp()
         {
             int expForNextLevel = CalculateExpForLevel(Level + 1);
@@ -83,12 +95,21 @@ namespace PokemonSweeper.Game.PokemonModels
             }
         }
 
+        /// <summary>
+        /// Calculates the experience points required to reach a specific level based on the Pokemon's growth rate.
+        /// </summary>
+        /// <param name="targetLevel">The target level for which to calculate the required experience points.</param>
+        /// <returns>The experience points required to reach the specified level.</returns>
         public int CalculateExpForLevel(int targetLevel)
         {
             // TODO: Implement exp curve based on Pokemon's growth rate. For now, using a simple cubic formula as a placeholder.
             return (int)(Math.Pow(targetLevel, 3));
         }
 
+        /// <summary>
+        /// Calculates the experience points yield for defeating this PlayerPokemon based on its base experience yield and level.
+        /// </summary>
+        /// <returns>The experience points yield for defeating this PlayerPokemon.</returns>
         public int CalculateExpYield()
         {
             // Simplified exp yield calculation
@@ -99,6 +120,16 @@ namespace PokemonSweeper.Game.PokemonModels
 
         #region Factory Methods
 
+        /// <summary>
+        /// Creates a random PlayerPokemon with a base stat total (BST) between the specified min and max values. 
+        /// The level can be optionally specified, and if provided, the generated Pokemon's level will be randomly chosen within a margin around that level.
+        /// </summary>
+        /// <param name="dal">The data access layer instance used to fetch Pokemon data.</param>
+        /// <param name="minBst">The minimum base stat total (BST) for the generated Pokemon.</param>
+        /// <param name="maxBst">The maximum base stat total (BST) for the generated Pokemon.</param>
+        /// <param name="level">The optional level for the generated Pokemon. If not specified, a random level will be chosen.</param>
+        /// <param name="levelMargin">The margin around the specified level within which the generated Pokemon's level can vary.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the generated PlayerPokemon.</returns>
         public static async Task<PlayerPokemon> CreateRandomFromBST(DAL dal, int minBst, int maxBst, int level = 0, int levelMargin = 10)
         {
             var pokemonBase = await dal.GetRandomPokemonByBstAsync(minBst, maxBst);
@@ -106,6 +137,14 @@ namespace PokemonSweeper.Game.PokemonModels
             return CreateWithRandomStats(pokemonBase, dal, level, levelMargin);
         }
 
+        /// <summary>
+        /// Creats a random PlayerPokemon with completely random stats. 
+        /// The level can be optionally specified, and if provided, the generated Pokemon's level will be randomly chosen within a margin around that level.
+        /// </summary>
+        /// <param name="dal">The data access layer instance used to fetch Pokemon data.</param>
+        /// <param name="level">The optional level for the generated Pokemon. If not specified, a random level will be chosen.</param>
+        /// <param name="levelMargin">The margin around the specified level within which the generated Pokemon's level can vary.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the generated PlayerPokemon.</returns>
         public static async Task<PlayerPokemon> CreateWithRandomStats(DAL dal, int level = 0, int levelMargin = 10)
         {
             var random = new Random();
@@ -116,6 +155,15 @@ namespace PokemonSweeper.Game.PokemonModels
             return CreateWithRandomStats(pokemonBase, dal, level, levelMargin);
         }
 
+        /// <summary>
+        /// Creates a PlayerPokemon with the specified base Pokemon and random IVs, EVs, and nature.
+        /// The level can be optionally specified, and if provided, the generated Pokemon's level will be randomly chosen within a margin around that level.
+        /// </summary>
+        /// <param name="pokemonBase">The base Pokemon to use for creating the PlayerPokemon.</param>
+        /// <param name="dal">The data access layer instance used to fetch Pokemon data.</param>
+        /// <param name="level">The optional level for the generated Pokemon. If not specified, a random level will be chosen.</param>
+        /// <param name="levelMargin">The margin around the specified level within which the generated Pokemon's level can vary.</param>
+        /// <returns>The generated PlayerPokemon with random stats.</returns>
         public static PlayerPokemon CreateWithRandomStats(Pokemon pokemonBase, DAL dal, int level = 0, int levelMargin = 10)
         {
             var random = new Random();
@@ -141,12 +189,15 @@ namespace PokemonSweeper.Game.PokemonModels
             return pokemon;
         }
 
+        /// <summary>
+        /// Generates random IVs, EVs, and nature for the PlayerPokemon.
+        /// </summary>
         public void GenerateRandomStats()
         {
             var random = new Random();
 
-            // Shiny chance is 1 in 4,096 (0.0244%), but we'll use 0.25 to make shinies more common for testing purposes
-            IsShiny = random.NextDouble() < 0.25;
+            // Shiny chance is 1 in 4,096 (0.0244%), but we'll use 0.125 to make shinies more common for testing purposes
+            IsShiny = random.NextDouble() < 0.125;
             int posNatureStat = random.Next(0, 6);
             int negNatureStat = random.Next(0, 6);
             int statIndex = 0;
@@ -165,6 +216,12 @@ namespace PokemonSweeper.Game.PokemonModels
             ResetHP(); // Set current HP to max HP after generating stats
         }
 
+        /// <summary>
+        /// Creates a PlayerPokemon instance from a BsonDocument retrieved from the database.
+        /// </summary>
+        /// <param name="bsonDoc">The BsonDocument containing the PlayerPokemon data.</param>
+        /// <param name="dal">The data access layer instance used to fetch Pokemon data.</param>
+        /// <returns>The created PlayerPokemon instance.</returns>
         public static PlayerPokemon CreateFromBson(BsonDocument bsonDoc, DAL dal)
         {
             var pokemon = new PlayerPokemon
@@ -194,6 +251,10 @@ namespace PokemonSweeper.Game.PokemonModels
             return pokemon;
         }
 
+        /// <summary>
+        /// Converts the PlayerPokemon instance into a BsonDocument for storage in the database.
+        /// </summary>
+        /// <returns>The BsonDocument representing the PlayerPokemon.</returns>
         public BsonDocument ToBson()
         {
             var statsDoc = new BsonDocument();

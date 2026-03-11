@@ -31,6 +31,11 @@ namespace PokemonSweeper.Game.PokemonModels
 
         #region Factory Methods
 
+        /// <summary>
+        /// Creates a Pokemon instance from a BsonDocument, typically retrieved from MongoDB. 
+        /// </summary>
+        /// <param name="bsonDoc">The BsonDocument containing the Pokemon data.</param>
+        /// <returns>A Pokemon instance populated with the data from the BsonDocument.</returns>
         public static Pokemon CreateFromBson(BsonDocument bsonDoc)
         {
             var types = bsonDoc["types"].AsBsonArray;
@@ -66,6 +71,10 @@ namespace PokemonSweeper.Game.PokemonModels
             };
         }
 
+        /// <summary>
+        /// Converts the Pokemon instance into a BsonDocument format suitable for storage in MongoDB.
+        /// </summary>
+        /// <returns>A BsonDocument representing the Pokemon instance.</returns>
         public BsonDocument ToBson()
         {
             return new BsonDocument

@@ -14,6 +14,11 @@ namespace PokemonSweeper.Game.PokemonModels
         public int EV { get; set; } = 0;
         public PokemonNatureType NatureType { get; set; } = PokemonNatureType.Neutral;
 
+        /// <summary>
+        /// Calculates the actual stat value based on the base value, IV, EV, level, and nature modifier.
+        /// </summary>
+        /// <param name="level">The level of the Pokemon.</param>
+        /// <returns>The calculated stat value.</returns>
         public int CalculateStat(int level)
         {
             int statValue = ((2 * BaseValue + IV + (EV / 4)) * level) / 100;

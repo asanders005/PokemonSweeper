@@ -197,6 +197,12 @@ namespace PokemonSweeper.Game.PokemonModels
 
         #region Data Methods
 
+        /// <summary>
+        /// Converts the PokemonTeam instance into a BsonDocument for storage in MongoDB. 
+        /// Each Pokemon in the team is stored with a key corresponding to its position in the team (e.g., "Pokemon0", "Pokemon1", etc.) and the value being the PlayerPokemonId of that Pokemon. 
+        /// If a slot in the team is empty (null), it is not included in the BsonDocument.
+        /// </summary>
+        /// <returns>A BsonDocument representing the PokemonTeam instance.</returns>
         public BsonDocument ToBson()
         {
             var doc = new BsonDocument();
@@ -208,6 +214,12 @@ namespace PokemonSweeper.Game.PokemonModels
             return doc;
         }
 
+        /// <summary>
+        /// Creates a PokemonTeam instance from a BsonDocument, typically retrieved from MongoDB.
+        /// </summary>
+        /// <param name="doc">The BsonDocument containing the PokemonTeam data.</param>
+        /// <param name="dal">The data access layer (DAL) instance used to retrieve PlayerPokemon instances.</param>
+        /// <returns>A PokemonTeam instance populated with the data from the BsonDocument.</returns>
         public static PokemonTeam FromBson(BsonDocument doc, DAL dal)
         {
             var team = new PokemonTeam(dal);
@@ -222,6 +234,10 @@ namespace PokemonSweeper.Game.PokemonModels
             return team;
         }
 
+        /// <summary>
+        /// Saves the current state of the PlayerPokemon in the team to the database by iterating through each Pokemon in the team and calling the SavePlayerPokemonAsync method of the DAL for each non-null Pokemon.
+        /// </summary>
+        /// <returns>A task representing the asynchronous save operation.</returns>
         public async Task SaveTeam()
         {
             foreach (var pokemon in Pokemon)

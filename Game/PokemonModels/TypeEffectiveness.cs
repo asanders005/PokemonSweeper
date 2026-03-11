@@ -14,6 +14,10 @@ namespace PokemonSweeper.Game.PokemonModels
         public Dictionary<PokemonType, float> AttackEffectiveness { get; set; } = new Dictionary<PokemonType, float>();
         public Dictionary<PokemonType, float> DefenseEffectiveness { get; set; } = new Dictionary<PokemonType, float>();
 
+        /// <summary>
+        /// Converts the TypeEffectiveness instance into a BsonDocument for storage in MongoDB.
+        /// </summary>
+        /// <returns>A BsonDocument representing the TypeEffectiveness instance.</returns>
         public BsonDocument ToBson()
         {
             var doc = new BsonDocument
@@ -25,6 +29,11 @@ namespace PokemonSweeper.Game.PokemonModels
             return doc;
         }
 
+        /// <summary>
+        /// Creates a TypeEffectiveness instance from a BsonDocument, typically retrieved from MongoDB.
+        /// </summary>
+        /// <param name="doc">The BsonDocument representing the TypeEffectiveness instance.</param>
+        /// <returns>A TypeEffectiveness instance created from the BsonDocument.</returns>
         public static TypeEffectiveness FromBson(BsonDocument doc)
         {
             var typeEffectiveness = new TypeEffectiveness

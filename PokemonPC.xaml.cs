@@ -30,7 +30,7 @@ public partial class PokemonPC : Window
     {
         _pokemonTeamService.CurrentTeam ??= await Dal.LoadPokemonTeamAsync();
         
-        Refresh();
+        await Refresh();
     }
 
     public async Task Refresh()
@@ -69,11 +69,11 @@ public partial class PokemonPC : Window
             };
 
             var i1 = i;
-            void AddToBox()
+            async void AddToBox()
             {
                 _pokemonTeamService.CurrentTeam.Pokemon[i1] = null;
-                LoadTeamPokemon();
-                LoadPcPokemon();
+                await LoadTeamPokemon();
+                await LoadPcPokemon();
             }
 
             if (pokemon != null) button.Click += (_, _) => DetailsOpen(pokemon, image);
@@ -88,6 +88,7 @@ public partial class PokemonPC : Window
             DockPanel.SetDock(label,Dock.Right);
             PokemonTeamGrid.Children.Add(button);
         }
+        await Task.CompletedTask;
     }
     private async Task LoadPcPokemon()
     {
@@ -148,15 +149,15 @@ public partial class PokemonPC : Window
                 Width = 50
             };
             
-            void AddToTeam()
+            async void AddToTeam()
             {
                 for (int i = 0; i < _pokemonTeamService.CurrentTeam.Pokemon.Length; i++)
                 {
                     ref var p = ref _pokemonTeamService.CurrentTeam.Pokemon[i];
                     if (p != null) continue;
                     p = pokemon;
-                    LoadTeamPokemon();
-                    LoadPcPokemon();
+                    await LoadTeamPokemon();
+                    await LoadPcPokemon();
                     break;
                 }
             }
@@ -190,7 +191,7 @@ public partial class PokemonPC : Window
         {
             await Dal.SavePokemonTeamAsync(_pokemonTeamService.CurrentTeam);
         }
-        catch (NullReferenceException error)
+        catch (NullReferenceException)
         {
             await Console.Error.WriteLineAsync("Warning: team is incomplete and will not be written to disk!");
         }
