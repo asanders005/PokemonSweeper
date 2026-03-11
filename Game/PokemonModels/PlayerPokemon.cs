@@ -145,7 +145,8 @@ namespace PokemonSweeper.Game.PokemonModels
         {
             var random = new Random();
 
-            IsShiny = random.NextDouble() < 0.00024;
+            // Shiny chance is 1 in 4,096 (0.0244%), but we'll use 0.25 to make shinies more common for testing purposes
+            IsShiny = random.NextDouble() < 0.25;
             int posNatureStat = random.Next(0, 6);
             int negNatureStat = random.Next(0, 6);
             int statIndex = 0;
