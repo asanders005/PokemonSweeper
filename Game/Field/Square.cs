@@ -147,6 +147,7 @@ namespace PokemonSweeper
                     await SwipeSquare(window);
                 }
             }
+
             if (Pokemon != null)
             {
                 Content = new Image {Source = new BitmapImage(new Uri(Pokemon.SpriteUrl))};
