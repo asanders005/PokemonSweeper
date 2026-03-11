@@ -13,19 +13,22 @@ namespace PokemonSweeper
     {
         private readonly Random Random = new Random();
         private readonly DAL _dal;
+        private readonly int _level;
+
         public Stopwatch Timer;
 
-        private Field(int rows, int columns, DAL dal)
+        private Field(int rows, int columns, DAL dal, int level)
         {
+            _level = level;
             Rows = rows;
             _dal = dal;
             Columns = columns;
             NrOfClicks = 0;
         }
 
-        public static async Task<Field> CreateAsync(int rows, int columns, int nrOfPokemon, int openSquares, GameWindow window, DAL dal, PokemonTeamService pokemonTeamService)
+        public static async Task<Field> CreateAsync(int rows, int columns, int nrOfPokemon, int openSquares, GameWindow window, int level, DAL dal, PokemonTeamService pokemonTeamService)
         {
-            var field = new Field(rows, columns, dal);
+            var field = new Field(rows, columns, dal, level);
             await field.PopulateField(nrOfPokemon, openSquares, window, pokemonTeamService);
             field.Timer = Stopwatch.StartNew();
             return field;
@@ -58,6 +61,23 @@ namespace PokemonSweeper
                 pokemonPlacers.Add(pokemonLocation);
             }
             Squares = new List<Square>();
+
+            int minBst = _level switch
+            {
+                0 => 0,
+                1 => 350,
+                2 => 500,
+                _ => throw new ArgumentOutOfRangeException(nameof(_level), "Level must be between 0 and 2.")
+            };
+
+            int maxBst = _level switch
+            {
+                0 => 375,
+                1 => 525,
+                2 => int.MaxValue,
+                _ => throw new ArgumentOutOfRangeException(nameof(_level), "Level must be between 0 and 2.")
+            };
+
             for (var row = 0; row < Rows; row++)
             {
                 for (var column = 0; column < Columns; column++)
@@ -65,7 +85,7 @@ namespace PokemonSweeper
                     Squares.Add(new Square(this, Rows, Columns, row, column, teamService, _dal));
                     if (pokemonPlacers.Contains(Squares.Count - 1))
                     {
-                        Squares[Squares.Count - 1].Pokemon = await PlayerPokemon.CreateWithRandomStats(_dal, averageLevel);
+                        Squares[Squares.Count - 1].Pokemon = await PlayerPokemon.CreateRandomFromBST(_dal, minBst, maxBst, averageLevel);
                     }
                 }
             }

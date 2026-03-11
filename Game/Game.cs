@@ -31,7 +31,7 @@ namespace PokemonSweeper.Game
                     Level = 1;
                     break;
                 case "hard": 
-                    FieldLevel =new FieldLevel {Rows = 16, Columns = 32, Pokemon = 99, NextLevel = 20000};
+                    FieldLevel = new FieldLevel {Rows = 16, Columns = 32, Pokemon = 99, NextLevel = 20000};
                     Level = 2;
                     break;
             }
@@ -95,6 +95,7 @@ namespace PokemonSweeper.Game
                 FieldLevel.Columns,
                 FieldLevel.Pokemon,
                 FieldLevel.Open, window, 
+                Level,
                 _dal,
                 _pokemonTeamService);
 

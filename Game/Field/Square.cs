@@ -139,6 +139,15 @@ namespace PokemonSweeper
         public async Task SwipeSquare(GameWindow window)
         {
             Field.NrOfClicks++;
+            if (Field.NrOfClicks == 1)
+            {
+                if (Pokemon != null)
+                {
+                    await window.Game.NewField(window);
+                    await SwipeSquare(window);
+                }
+            }
+
             if (Pokemon != null)
             {
                 Content = new Image {Source = new BitmapImage(new Uri(Pokemon.SpriteUrl))};
@@ -153,7 +162,7 @@ namespace PokemonSweeper
                 if (battleResult.Item1)
                     BattleMessage.ShowMessage(window, Pokemon, battleResult.Item2);
                 else
-                    FailMessage.ShowMessage(window, Pokemon);
+                    FailMessage.ShowMessage(window, Pokemon, _d);
             }
             else if (Mines > 0)
             {

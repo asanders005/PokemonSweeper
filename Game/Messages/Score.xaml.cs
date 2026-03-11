@@ -86,8 +86,10 @@ namespace PokemonSweeper.Game.Messages
         {
             await SavePokemon();
 
-            MainMenu main=new MainMenu(_dal,_team);
+            MainMenu main=new MainMenu(_dal);
             main.Show();
+
+            Owner.Close();
             Close();
         }
 

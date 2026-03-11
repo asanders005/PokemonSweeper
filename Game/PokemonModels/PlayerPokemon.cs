@@ -99,6 +99,13 @@ namespace PokemonSweeper.Game.PokemonModels
 
         #region Factory Methods
 
+        public static async Task<PlayerPokemon> CreateRandomFromBST(DAL dal, int minBst, int maxBst, int level = 0, int levelMargin = 10)
+        {
+            var pokemonBase = await dal.GetRandomPokemonByBstAsync(minBst, maxBst);
+
+            return CreateWithRandomStats(pokemonBase, dal, level, levelMargin);
+        }
+
         public static async Task<PlayerPokemon> CreateWithRandomStats(DAL dal, int level = 0, int levelMargin = 10)
         {
             var random = new Random();
