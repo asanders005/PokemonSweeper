@@ -38,7 +38,7 @@ namespace PokemonSweeper.Game.Field
             this.Close();
         }
 
-        private void Meduim_Click(object sender, RoutedEventArgs e)
+        private void Medium_Click(object sender, RoutedEventArgs e)
         {
             Data.DAL dal = new Data.DAL();
             GameWindow game = new GameWindow(dal, _pokemonTeamService, "intermediate");
