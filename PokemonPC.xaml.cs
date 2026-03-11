@@ -25,7 +25,7 @@ public partial class PokemonPC : Window
 
     private async void WindowLoaded(object sender, RoutedEventArgs e)
     {
-
+        _pokemonTeamService.CurrentTeam ??= await Dal.LoadPokemonTeamAsync();
         
         int pid = 1;
         PlayerPokemon p;
@@ -56,7 +56,7 @@ public partial class PokemonPC : Window
             };
             Label label = new Label()
             {
-                Content = pokemon.Pokemon.Name,
+                Content = char.ToUpper(pokemon.Pokemon.Name[0]) + pokemon.Pokemon.Name[1..],
                 HorizontalAlignment = HorizontalAlignment.Right,
                 FontSize = 20,
                 VerticalAlignment = VerticalAlignment.Center
@@ -70,8 +70,11 @@ public partial class PokemonPC : Window
 
             void DetailsOpen()
             {
-                PokemonDetails details = new PokemonDetails(Dal);
-                details.CurrentPlayerPokemon = pokemon;
+                PokemonDetails details = new PokemonDetails(Dal)
+                {
+                    CurrentPlayerPokemon = pokemon
+                };
+                RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
                 details.Show();
             }
 

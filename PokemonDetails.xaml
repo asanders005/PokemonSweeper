@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Name="PokemonName" HorizontalContentAlignment="Center" Content="Name" FontSize="40" Height="100" VerticalContentAlignment="Bottom" HorizontalAlignment="Center" Margin="10"/>
         <DockPanel Grid.Row="1">
-            <Image Name="PokemonImage" VerticalAlignment="Center" Width="150" Source="images/pokeball.png" Margin="10 0 10 0" DockPanel.Dock="Left"/>
+            <Image Name="PokemonImage" RenderOptions.BitmapScalingMode="NearestNeighbor" VerticalAlignment="Center" Width="150" Source="images/pokeball.png" Margin="10 0 10 0" DockPanel.Dock="Left"/>
             <Label Name="PokemonType" Content="Type" FontSize="20" VerticalContentAlignment="Top" DockPanel.Dock="Top"/>
             <Grid DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
