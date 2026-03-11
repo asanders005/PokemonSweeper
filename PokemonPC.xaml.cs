@@ -28,9 +28,9 @@ public partial class PokemonPC : Window
     private async void WindowLoaded(object sender, RoutedEventArgs e)
     {
         _pokemonTeamService.CurrentTeam ??= await Dal.LoadPokemonTeamAsync();
-
-        LoadTeamPokemon();
         
+        LoadTeamPokemon();
+
         LoadPcPokemon();
     }
 
@@ -76,7 +76,7 @@ public partial class PokemonPC : Window
             var i1 = i;
             void AddToBox()
             {
-                _pokemonTeamService.CurrentTeam.Pokemon[i1] = new PlayerPokemon();
+                _pokemonTeamService.CurrentTeam.Pokemon[i1] = null;
                 LoadTeamPokemon();
                 LoadPcPokemon();
             }
@@ -112,6 +112,13 @@ public partial class PokemonPC : Window
             } while (true);
         }
         
+        int[] blacklist = new int[6];
+        for (int i = 0; i < 6; i++)
+        {
+            var p = _pokemonTeamService.CurrentTeam.Pokemon[i];
+            blacklist[i] = p?.PlayerPokemonId ?? -1;
+        }
+        
         for (int i = 0; i < 3; i++)
         {
             PokemonPCGrid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -125,7 +132,7 @@ public partial class PokemonPC : Window
         int j = 0;
         foreach (PlayerPokemon pokemon in PCPokemon)
         {
-            if (_pokemonTeamService.CurrentTeam.Pokemon.Contains(pokemon)) continue;
+            if (blacklist.Contains(pokemon.PlayerPokemonId)) continue;
             
             DockPanel grid = new();
             Button button = new()
