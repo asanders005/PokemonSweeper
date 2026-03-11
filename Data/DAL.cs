@@ -629,7 +629,7 @@ namespace PokemonSweeper.Data
                                 continue;
                             }
 
-                            pokemons[i] = new PlayerPokemon { Pokemon = await GetPokemonByDexNumAsync(pokemonIds[i]), Level = 1, CurrentHP = 10 };
+                            pokemons[i] = await GetPlayerPokemonAsync(pokemonIds[i]);
                         }
                         return new PokemonTeam(this) { Pokemon = pokemons };
                     }
