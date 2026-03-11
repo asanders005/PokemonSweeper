@@ -121,39 +121,21 @@ The project expands a classic Minesweeper implementation into a small game syste
 The game is composed of several core systems:
 
 
-+----------------------+
-| UI Layer |
-| (Menus, Board, Box) |
-+----------+-----------+
-|
-v
-+----------------------+
+```mermaid
+flowchart TD
 
-Game Logic Layer
-Board Generation
-Tile State Handling
-Battle System
-Team Management
-+----------+-----------+
-       |
-       v
+UI[UI Layer<br/>Menus • Board • Pokémon Box]
 
-+----------------------+
+Logic[Game Logic Layer<br/>Board Generation<br/>Tile State Handling<br/>Battle System<br/>Team Management]
 
-Data Layer
-MongoDB Persistence
-JSON File Storage
-Storage Abstraction
-+----------+-----------+
-       |
-       v
+Data[Data Layer<br/>MongoDB Persistence<br/>JSON File Storage<br/>Storage Abstraction]
 
-+----------------------+
+API[External API Layer<br/>PokeAPI Integration<br/>Pokémon Data Loader]
 
-External API Layer
-PokeAPI Integration
-Pokémon Data Loader
-+----------------------+
+UI --> Logic
+Logic --> Data
+Logic --> API
+```
 
 ## Game Board System
 
