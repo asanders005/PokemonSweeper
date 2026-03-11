@@ -124,13 +124,13 @@ The game is composed of several core systems:
 ```mermaid
 flowchart TD
 
-UI[UI Layer<br/>Menus • Board • Pokémon Box]
+UI[<b><u>UI Layer</u></b><br/>Menus • Board • Pokémon Box]
 
-Logic[Game Logic Layer<br/>Board Generation<br/>Tile State Handling<br/>Battle System<br/>Team Management]
+Logic[<b><u>Game Logic Layer</u></b><br/>Board Generation<br/>Tile State Handling<br/>Battle System<br/>Team Management]
 
-Data[Data Layer<br/>MongoDB Persistence<br/>JSON File Storage<br/>Storage Abstraction]
+Data[<b><u>Data Layer</u></b><br/>MongoDB Persistence<br/>JSON File Storage<br/>Storage Abstraction]
 
-API[External API Layer<br/>PokeAPI Integration<br/>Pokémon Data Loader]
+API[<b><u>External API Layer</u></b><br/>PokeAPI Integration<br/>Pokémon Data Loader]
 
 UI --> Logic
 Logic --> Data
