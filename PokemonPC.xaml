@@ -19,7 +19,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" HorizontalContentAlignment="Center" Content="My Team:" FontSize="30" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10"/>
-
+        <Grid Name="PokemonTeamGrid" Grid.Row="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+        </Grid>
         <Label Grid.Row="2" HorizontalContentAlignment="Center" Content="PC:" FontSize="30" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10"/>
         <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Margin="10">
             <Grid Name="PokemonPCGrid"/>
