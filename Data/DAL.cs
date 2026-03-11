@@ -370,7 +370,7 @@ namespace PokemonSweeper.Data
 
                 for (int i = 0; i < team.Pokemon.Length; i++)
                 {
-                    json += $"\"Pokemon[{i}]\": {team.Pokemon[i].PlayerPokemonId},";
+                    json += $"\"Pokemon[{i}]\": {team.Pokemon[i]?.PlayerPokemonId ?? -1},";
                 }
                 json = json.TrimEnd(',') + "}";
 
@@ -623,6 +623,12 @@ namespace PokemonSweeper.Data
                         var pokemons = new PlayerPokemon[pokemonIds.Length];
                         for (int i = 0; i < pokemonIds.Length; i++)
                         {
+                            if (pokemonIds[i] == -1)
+                            {
+                                pokemons[i] = null;
+                                continue;
+                            }
+
                             pokemons[i] = new PlayerPokemon { Pokemon = await GetPokemonByDexNumAsync(pokemonIds[i]), Level = 1, CurrentHP = 10 };
                         }
                         return new PokemonTeam(this) { Pokemon = pokemons };
