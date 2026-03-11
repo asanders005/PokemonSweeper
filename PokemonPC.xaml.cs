@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -29,12 +30,16 @@ public partial class PokemonPC : Window
     {
         _pokemonTeamService.CurrentTeam ??= await Dal.LoadPokemonTeamAsync();
         
-        LoadTeamPokemon();
-
-        LoadPcPokemon();
+        Refresh();
     }
 
-    private async void LoadTeamPokemon()
+    public async Task Refresh()
+    {
+        await LoadTeamPokemon();
+        await LoadPcPokemon();
+    }
+
+    private async Task LoadTeamPokemon()
     {
         PokemonTeamGrid.Children.Clear();
         
@@ -63,16 +68,6 @@ public partial class PokemonPC : Window
                 Width = 50
             };
 
-            void DetailsOpen()
-            {
-                PokemonDetails details = new PokemonDetails(Dal)
-                {
-                    CurrentPlayerPokemon = pokemon
-                };
-                RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
-                details.Show();
-            }
-
             var i1 = i;
             void AddToBox()
             {
@@ -81,7 +76,7 @@ public partial class PokemonPC : Window
                 LoadPcPokemon();
             }
 
-            if (pokemon != null) button.Click += (_, _) => DetailsOpen();
+            if (pokemon != null) button.Click += (_, _) => DetailsOpen(pokemon, image);
             if (pokemon != null) button.MouseRightButtonDown += (_, _) => AddToBox();
             
             Grid.SetColumn(button, i%3);
@@ -94,7 +89,7 @@ public partial class PokemonPC : Window
             PokemonTeamGrid.Children.Add(button);
         }
     }
-    private async void LoadPcPokemon()
+    private async Task LoadPcPokemon()
     {
         PokemonPCGrid.ColumnDefinitions.Clear();
         PokemonPCGrid.RowDefinitions.Clear();
@@ -152,16 +147,6 @@ public partial class PokemonPC : Window
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Width = 50
             };
-
-            void DetailsOpen()
-            {
-                PokemonDetails details = new PokemonDetails(Dal)
-                {
-                    CurrentPlayerPokemon = pokemon
-                };
-                RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
-                details.Show();
-            }
             
             void AddToTeam()
             {
@@ -176,7 +161,7 @@ public partial class PokemonPC : Window
                 }
             }
 
-            button.Click += (_, _) => DetailsOpen();
+            button.Click += (_, _) => DetailsOpen(pokemon, image);
             button.MouseRightButtonDown += (_, _) => AddToTeam();
             
             Grid.SetColumn(button, j%3);
@@ -190,6 +175,13 @@ public partial class PokemonPC : Window
 
             j++;
         }
+    }
+    
+    private void DetailsOpen(PlayerPokemon pokemon, Image image)
+    {
+        PokemonDetails details = new PokemonDetails(Dal, pokemon, this);
+        RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
+        details.Show();
     }
     
     private async void BackClick(object sender, RoutedEventArgs e)

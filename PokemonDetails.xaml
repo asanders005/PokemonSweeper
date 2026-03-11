@@ -16,7 +16,15 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Name="PokemonName" HorizontalContentAlignment="Center" Content="Name" FontSize="40" Height="80" VerticalContentAlignment="Bottom" HorizontalAlignment="Center"/>
+        <Grid Grid.Row="0" HorizontalAlignment="Left" Margin="165 0 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Name="PokemonNameEntry" Visibility="Hidden" HorizontalContentAlignment="Center" Text="Name" FontSize="40" Height="80" VerticalContentAlignment="Bottom" HorizontalAlignment="Center"/>
+            <Label Grid.Column="0" Name="PokemonName" Visibility="Visible" HorizontalContentAlignment="Center" Content="Name" FontSize="40" Height="80" VerticalContentAlignment="Bottom" HorizontalAlignment="Center"/>
+            <Button Grid.Column="1" Name="EditPokemonName" Click="EditButton" Content="Edit" Padding="5" FontSize="20" Margin="20 0 0 10" VerticalAlignment="Bottom"/>
+        </Grid>
         <DockPanel Grid.Row="1">
             <Image Name="PokemonImage" RenderOptions.BitmapScalingMode="NearestNeighbor" VerticalAlignment="Center" Width="150" Source="images/pokeball.png" Margin="10 0 10 0" DockPanel.Dock="Left"/>
             <Label Name="PokemonLevel" Content="Level 1" FontSize="20" VerticalContentAlignment="Top" DockPanel.Dock="Top"/>

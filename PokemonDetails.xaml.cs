@@ -9,12 +9,16 @@ namespace PokemonSweeper;
 
 public partial class PokemonDetails : Window
 {
-    public PlayerPokemon CurrentPlayerPokemon { get; set; }
+    public PlayerPokemon? CurrentPlayerPokemon { get; set; }
     public DAL Dal { get; set; }
-    public PokemonDetails(DAL dal)
+    private PokemonPC? PCWindow { get; set; }
+    private bool editMode;
+    public PokemonDetails(DAL dal, PlayerPokemon? pokemon = null, PokemonPC? pcwindow = null)
     {
         InitializeComponent();
         Dal = dal;
+        if (pokemon != null) CurrentPlayerPokemon = pokemon;
+        if (pcwindow != null) PCWindow = pcwindow;
     }
 
     private async void SetPokemon()
@@ -39,8 +43,33 @@ public partial class PokemonDetails : Window
         PokemonSpeed.Content = "Speed: " + p.BaseStats[PokemonStatsType.Speed];
     }
 
-    private void BackClick(object sender, RoutedEventArgs e)
+    private void EditButton(object sender, RoutedEventArgs e)
     {
+        var p = CurrentPlayerPokemon.Pokemon;
+        
+        if (!editMode)
+        {
+            editMode = true;
+            EditPokemonName.Content = "Save";
+            PokemonNameEntry.Text = char.ToUpper(p.Name[0]) + p.Name[1..];
+            PokemonNameEntry.Visibility =  Visibility.Visible;
+            PokemonName.Visibility = Visibility.Hidden;
+        }
+        else
+        {
+            editMode = false;
+            EditPokemonName.Content = "Edit";
+            p.Name = PokemonNameEntry.Text;
+            PokemonName.Content = char.ToUpper(p.Name[0]) + p.Name[1..];
+            PokemonNameEntry.Visibility =  Visibility.Visible;
+            PokemonName.Visibility = Visibility.Hidden;
+        }
+    }
+
+    private async void BackClick(object sender, RoutedEventArgs e)
+    {
+        await Dal.SavePlayerPokemonAsync(CurrentPlayerPokemon);
+        if (PCWindow != null) await PCWindow.Refresh();
         Close();
     }
     
