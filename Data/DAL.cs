@@ -471,6 +471,25 @@ namespace PokemonSweeper.Data
         }
 
         /// <summary>
+        /// Gets a random Pokemon whose Base Stat Total (BST) falls within the specified minimum and maximum range.
+        /// </summary>
+        /// <param name="minBst">The minimum BST value.</param>
+        /// <param name="maxBst">The maximum BST value.</param>
+        /// <returns>A task representing the asynchronous operation, with the retrieved Pokemon object as the result.</returns>
+        public async Task<Pokemon> GetRandomPokemonByBstAsync(int minBst, int maxBst)
+        {
+            var allPokemon = PokemonMasterList.Keys.ToList();
+            var random = new Random();
+            while (true)
+            {
+                int randomDexNum = allPokemon[random.Next(allPokemon.Count)];
+                var pokemon = await GetPokemonByDexNumAsync(randomDexNum);
+                if (pokemon.BST >= minBst && pokemon.BST <= maxBst)
+                    return pokemon;
+            }
+        }
+
+        /// <summary>
         /// Retrieves the type effectiveness information for a given PokemonType.
         /// It first checks if the information exists in the database or as a JSON file, and returns it if found.
         /// If not found, it fetches the type effectiveness data from the PokeAPI, creates a new TypeEffectiveness object, saves it to the database or as a JSON file for future access, and then returns the newly created TypeEffectiveness object.
