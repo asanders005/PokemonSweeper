@@ -1,6 +1,7 @@
 ﻿using PokemonSweeper.Data;
 using PokemonSweeper.Game.Field;
 using PokemonSweeper.Game.PokemonModels;
+using PokemonSweeper.Services;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -13,16 +14,18 @@ namespace PokemonSweeper.Game.Messages
     public partial class FailMessage : Window
     {
         private DAL _dal;
+        private PokemonTeamService _pokemonTeamService;
 
-        public FailMessage()
+        public FailMessage(DAL dal, PokemonTeamService pokemonTeam)
         {
             InitializeComponent();
+            _dal = dal;
+            _pokemonTeamService = pokemonTeam;
         }
 
-        public static async void ShowMessage(GameWindow window, PlayerPokemon pokemon, DAL dal)
+        public static async void ShowMessage(GameWindow window, PlayerPokemon pokemon, DAL dal, PokemonTeamService pokemonTeamService)
         {
-            var Fail = new FailMessage();
-            Fail._dal = dal;
+            var Fail = new FailMessage(dal, pokemonTeamService);
             Fail.EscapedPokemon.Source = new BitmapImage(new System.Uri(pokemon.SpriteUrl));
             Fail.Message.Text = $"A wild {pokemon.Pokemon.Name} Appeared! \n The {pokemon.Pokemon.Name} defeated your Pokemon! \n You whited out!";
             Fail.Title = "Game over!";
@@ -39,7 +42,7 @@ namespace PokemonSweeper.Game.Messages
 
         private void MainMenu_Click(object sender, RoutedEventArgs e)
         {
-            MainMenu main = new MainMenu(_dal);
+            MainMenu main = new MainMenu(_dal, _pokemonTeamService);
             main.Show();
 
             Owner.Close();

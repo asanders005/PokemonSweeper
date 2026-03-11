@@ -16,16 +16,16 @@ namespace PokemonSweeper.Game.Messages
     {
         private int _maxSelectablePokemon = 2;
         private DAL _dal;
-        private PokemonTeam _team;
+        private PokemonTeamService _team;
 
-        public Score(PokemonTeam pokemonTeam, DAL dal)
+        public Score(PokemonTeamService pokemonTeam, DAL dal)
         {
             _dal = dal;
             _team = pokemonTeam;
             InitializeComponent();
         }
 
-        public static async void ShowScore(GameWindow sender, PokemonSweeper.Field Field, PokemonTeam pokemonTeam, DAL dal)
+        public static async void ShowScore(GameWindow sender, PokemonSweeper.Field Field, PokemonTeamService pokemonTeam, DAL dal)
         {
             Field.Timer.Stop();
             var PokeList = new List<PlayerPokemon>();
@@ -37,9 +37,9 @@ namespace PokemonSweeper.Game.Messages
                 PokeList.Add(square.Pokemon);
             }
 
-            int expGain = pokemonTeam.AwardExpToTeam(PokeList);
+            int expGain = pokemonTeam.CurrentTeam.AwardExpToTeam(PokeList);
 
-            await pokemonTeam.SaveTeam();
+            await pokemonTeam.CurrentTeam.SaveTeam();
 
             var newScore = sender.Game.CalculateNewScore(Field.Timer, Field.NrOfClicks, PokeList);
             Winner.score.Text = "Good job! You caught all the Pokemon!! Your Non-fainted Pokemon have earned " + expGain + " experience points each! Your score is " + newScore;
@@ -86,7 +86,7 @@ namespace PokemonSweeper.Game.Messages
         {
             await SavePokemon();
 
-            MainMenu main=new MainMenu(_dal);
+            MainMenu main=new MainMenu(_dal, _team);
             main.Show();
 
             Owner.Close();
