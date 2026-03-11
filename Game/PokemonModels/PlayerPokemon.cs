@@ -130,7 +130,7 @@ namespace PokemonSweeper.Game.PokemonModels
         /// <param name="level">The optional level for the generated Pokemon. If not specified, a random level will be chosen.</param>
         /// <param name="levelMargin">The margin around the specified level within which the generated Pokemon's level can vary.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the generated PlayerPokemon.</returns>
-        public static async Task<PlayerPokemon> CreateRandomFromBST(DAL dal, int minBst, int maxBst, int level = 0, int levelMargin = 10)
+        public static async Task<PlayerPokemon> CreateRandomFromBST(IDal dal, int minBst, int maxBst, int level = 0, int levelMargin = 10)
         {
             var pokemonBase = await dal.GetRandomPokemonByBstAsync(minBst, maxBst);
 
@@ -145,7 +145,7 @@ namespace PokemonSweeper.Game.PokemonModels
         /// <param name="level">The optional level for the generated Pokemon. If not specified, a random level will be chosen.</param>
         /// <param name="levelMargin">The margin around the specified level within which the generated Pokemon's level can vary.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the generated PlayerPokemon.</returns>
-        public static async Task<PlayerPokemon> CreateWithRandomStats(DAL dal, int level = 0, int levelMargin = 10)
+        public static async Task<PlayerPokemon> CreateWithRandomStats(IDal dal, int level = 0, int levelMargin = 10)
         {
             var random = new Random();
             var randomDexNum = random.Next(1, dal.PokemonMasterList.Count);
@@ -164,7 +164,7 @@ namespace PokemonSweeper.Game.PokemonModels
         /// <param name="level">The optional level for the generated Pokemon. If not specified, a random level will be chosen.</param>
         /// <param name="levelMargin">The margin around the specified level within which the generated Pokemon's level can vary.</param>
         /// <returns>The generated PlayerPokemon with random stats.</returns>
-        public static PlayerPokemon CreateWithRandomStats(Pokemon pokemonBase, DAL dal, int level = 0, int levelMargin = 10)
+        public static PlayerPokemon CreateWithRandomStats(Pokemon pokemonBase, IDal dal, int level = 0, int levelMargin = 10)
         {
             var random = new Random();
 
@@ -222,7 +222,7 @@ namespace PokemonSweeper.Game.PokemonModels
         /// <param name="bsonDoc">The BsonDocument containing the PlayerPokemon data.</param>
         /// <param name="dal">The data access layer instance used to fetch Pokemon data.</param>
         /// <returns>The created PlayerPokemon instance.</returns>
-        public static PlayerPokemon CreateFromBson(BsonDocument bsonDoc, DAL dal)
+        public static PlayerPokemon CreateFromBson(BsonDocument bsonDoc, IDal dal)
         {
             var pokemon = new PlayerPokemon
             {

@@ -11,7 +11,7 @@ namespace PokemonSweeper.Game
 {
     public class PokeSweepGame
     {
-        public PokeSweepGame(DAL dal, PokemonTeamService teamService, string value)
+        public PokeSweepGame(IDal dal, PokemonTeamService teamService, string value)
         {
             _dal = dal;
             _pokemonTeamService = teamService;
@@ -109,6 +109,6 @@ namespace PokemonSweeper.Game
         }
 
         private PokemonTeamService _pokemonTeamService;
-        private readonly DAL _dal;
+        private readonly IDal _dal;
     }
 }

@@ -10,13 +10,13 @@ namespace PokemonSweeper.Services
 {
     public class PokemonTeamService
     {
-        public PokemonTeamService(DAL dal)
+        public PokemonTeamService(IDal dal)
         {
             _dal = dal;
         }
 
         public PokemonTeam CurrentTeam { get; set; } = null!;
 
-        private readonly DAL _dal;
+        private readonly IDal _dal;
     }
 }

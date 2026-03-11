@@ -13,11 +13,11 @@ namespace PokemonSweeper.Game.PokemonModels
     public class PokemonTeam
     {
         private readonly Random _random = new Random();
-        private readonly DAL _dal;
+        private readonly IDal _dal;
 
         public PlayerPokemon[] Pokemon { get; set; } = new PlayerPokemon[6];
 
-        public PokemonTeam(DAL dal)
+        public PokemonTeam(IDal dal)
         {
             _dal = dal;
         }
@@ -218,9 +218,9 @@ namespace PokemonSweeper.Game.PokemonModels
         /// Creates a PokemonTeam instance from a BsonDocument, typically retrieved from MongoDB.
         /// </summary>
         /// <param name="doc">The BsonDocument containing the PokemonTeam data.</param>
-        /// <param name="dal">The data access layer (DAL) instance used to retrieve PlayerPokemon instances.</param>
+        /// <param name="Dal">The data access layer (IDal) instance used to retrieve PlayerPokemon instances.</param>
         /// <returns>A PokemonTeam instance populated with the data from the BsonDocument.</returns>
-        public static PokemonTeam FromBson(BsonDocument doc, DAL dal)
+        public static PokemonTeam FromBson(BsonDocument doc, IDal dal)
         {
             var team = new PokemonTeam(dal);
             for (int i = 0; i < 6; i++)

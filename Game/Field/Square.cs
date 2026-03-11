@@ -27,7 +27,7 @@ namespace PokemonSweeper
             Question
         }
 
-        public Square(Field field, int rows, int columns, int row, int column, PokemonTeamService pokemonTeamService, DAL dal)
+        public Square(Field field, int rows, int columns, int row, int column, PokemonTeamService pokemonTeamService, IDal dal)
         {
             Field = field;
             NrOfRows = rows;
@@ -55,7 +55,7 @@ namespace PokemonSweeper
         public PlayerPokemon Pokemon { get; set; }
 
         private PokemonTeamService _pokemonTeamService;
-        private readonly DAL _d;
+        private readonly IDal _d;
 
         private static readonly Brush[] NumberColors = {
             Brushes.Blue,

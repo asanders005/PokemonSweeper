@@ -12,12 +12,12 @@ namespace PokemonSweeper
     public class Field
     {
         private readonly Random Random = new Random();
-        private readonly DAL _dal;
+        private readonly IDal _dal;
         private readonly int _level;
 
         public Stopwatch Timer;
 
-        private Field(int rows, int columns, DAL dal, int level)
+        private Field(int rows, int columns, IDal dal, int level)
         {
             _level = level;
             Rows = rows;
@@ -26,7 +26,7 @@ namespace PokemonSweeper
             NrOfClicks = 0;
         }
 
-        public static async Task<Field> CreateAsync(int rows, int columns, int nrOfPokemon, int openSquares, GameWindow window, int level, DAL dal, PokemonTeamService pokemonTeamService)
+        public static async Task<Field> CreateAsync(int rows, int columns, int nrOfPokemon, int openSquares, GameWindow window, int level, IDal dal, PokemonTeamService pokemonTeamService)
         {
             var field = new Field(rows, columns, dal, level);
             await field.PopulateField(nrOfPokemon, openSquares, window, pokemonTeamService);

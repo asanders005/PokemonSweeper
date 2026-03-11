@@ -15,11 +15,11 @@ namespace PokemonSweeper;
 
 public partial class PokemonPC : Window
 {
-    public DAL Dal { get; set; }
+    public IDal Dal { get; set; }
     private List<PlayerPokemon> PCPokemon { get; set; } = new();
     private PokemonTeamService _pokemonTeamService;
 
-    public PokemonPC(DAL dal, PokemonTeamService pokemonTeamService)
+    public PokemonPC(IDal dal, PokemonTeamService pokemonTeamService)
     {
         InitializeComponent();
         Dal = dal;

@@ -37,11 +37,13 @@ namespace PokemonSweeper
                     var client = sp.GetRequiredService<IMongoClient>();
                     return client.GetDatabase("Pokemon");
                 });
+                services.AddSingleton<IDal, MongoDal>();
             }
+            else
+                services.AddSingleton<IDal, LocalDal>();
 
             // Register application services
             services.AddSingleton<PokemonTeamService>();
-            services.AddSingleton<DAL>();
             services.AddTransient<MainMenu>();
 
             ServiceProvider = services.BuildServiceProvider();
@@ -49,7 +51,7 @@ namespace PokemonSweeper
             var mainWindow = ServiceProvider.GetRequiredService<MainMenu>();
             mainWindow.Show();
         }
-        
+
         // Method for testing new pages without messing up the original Application_Startup
         private void Test_Startup(object sender, StartupEventArgs e)
         {
@@ -76,7 +78,7 @@ namespace PokemonSweeper
 
             // Register application services
             services.AddSingleton<PokemonTeamService>();
-            services.AddSingleton<DAL>();
+            services.AddSingleton<IDal>();
             services.AddTransient<PokemonPC>();
 
             ServiceProvider = services.BuildServiceProvider();

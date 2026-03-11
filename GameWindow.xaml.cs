@@ -9,7 +9,7 @@ namespace PokemonSweeper
 {
     public partial class GameWindow : Window
     {
-        public GameWindow(DAL dal, PokemonTeamService teamService,string value)
+        public GameWindow(IDal dal, PokemonTeamService teamService,string value)
         {
             InitializeComponent();
             Game = new PokeSweepGame(dal, teamService,value);

@@ -10,10 +10,10 @@ namespace PokemonSweeper;
 public partial class PokemonDetails : Window
 {
     public PlayerPokemon? CurrentPlayerPokemon { get; set; }
-    public DAL Dal { get; set; }
+    public IDal Dal { get; set; }
     private PokemonPC? PCWindow { get; set; }
     private bool editMode;
-    public PokemonDetails(DAL dal, PlayerPokemon? pokemon = null, PokemonPC? pcwindow = null)
+    public PokemonDetails(IDal dal, PlayerPokemon? pokemon = null, PokemonPC? pcwindow = null)
     {
         InitializeComponent();
         Dal = dal;
@@ -45,7 +45,9 @@ public partial class PokemonDetails : Window
 
     private void EditButton(object sender, RoutedEventArgs e)
     {
-        var p = CurrentPlayerPokemon.Pokemon;
+        var p = CurrentPlayerPokemon?.Pokemon ?? null;
+        if (p == null)
+            return;
         
         if (!editMode)
         {

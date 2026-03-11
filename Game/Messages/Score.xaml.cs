@@ -15,17 +15,17 @@ namespace PokemonSweeper.Game.Messages
     public partial class Score : Window
     {
         private int _maxSelectablePokemon = 2;
-        private DAL _dal;
+        private IDal _dal;
         private PokemonTeamService _team;
 
-        public Score(PokemonTeamService pokemonTeam, DAL dal)
+        public Score(PokemonTeamService pokemonTeam, IDal dal)
         {
             _dal = dal;
             _team = pokemonTeam;
             InitializeComponent();
         }
 
-        public static async void ShowScore(GameWindow sender, PokemonSweeper.Field Field, PokemonTeamService pokemonTeam, DAL dal)
+        public static async void ShowScore(GameWindow sender, PokemonSweeper.Field Field, PokemonTeamService pokemonTeam, IDal dal)
         {
             Field.Timer.Stop();
             var PokeList = new List<PlayerPokemon>();

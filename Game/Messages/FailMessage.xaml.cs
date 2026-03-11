@@ -13,17 +13,17 @@ namespace PokemonSweeper.Game.Messages
     /// </summary>
     public partial class FailMessage : Window
     {
-        private DAL _dal;
+        private IDal _dal;
         private PokemonTeamService _pokemonTeamService;
 
-        public FailMessage(DAL dal, PokemonTeamService pokemonTeam)
+        public FailMessage(IDal dal, PokemonTeamService pokemonTeam)
         {
             InitializeComponent();
             _dal = dal;
             _pokemonTeamService = pokemonTeam;
         }
 
-        public static async void ShowMessage(GameWindow window, PlayerPokemon pokemon, DAL dal, PokemonTeamService pokemonTeamService)
+        public static async void ShowMessage(GameWindow window, PlayerPokemon pokemon, IDal dal, PokemonTeamService pokemonTeamService)
         {
             var Fail = new FailMessage(dal, pokemonTeamService);
             Fail.EscapedPokemon.Source = new BitmapImage(new System.Uri(pokemon.SpriteUrl));

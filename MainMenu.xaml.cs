@@ -21,9 +21,9 @@ namespace PokemonSweeper.Game.Field
     /// </summary>
     public partial class MainMenu : Window
     {
-        private readonly DAL dal;
+        private readonly IDal dal;
         private readonly PokemonTeamService _pokemonTeamService;
-        public MainMenu(DAL dal, PokemonTeamService pokemonTeamService)
+        public MainMenu(IDal dal, PokemonTeamService pokemonTeamService)
         {
             InitializeComponent();
             this.dal = dal;
@@ -40,7 +40,6 @@ namespace PokemonSweeper.Game.Field
 
         private void Medium_Click(object sender, RoutedEventArgs e)
         {
-            Data.DAL dal = new Data.DAL();
             GameWindow game = new GameWindow(dal, _pokemonTeamService, "intermediate");
             game.Show();
             this.Close();
@@ -48,7 +47,6 @@ namespace PokemonSweeper.Game.Field
 
         private void Hard_Click(object sender, RoutedEventArgs e)
         {
-            Data.DAL dal = new Data.DAL();
             GameWindow game = new GameWindow(dal, _pokemonTeamService, "hard");
             game.Show();
             this.Close();
