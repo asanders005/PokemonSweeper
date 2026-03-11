@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using PokemonSweeper.Data;
 using PokemonSweeper.Game.PokemonModels;
+using PokemonSweeper.Services;
 
 namespace PokemonSweeper;
 
@@ -13,15 +14,18 @@ public partial class PokemonPC : Window
 {
     public DAL Dal { get; set; }
     private List<PlayerPokemon> PCPokemon { get; set; } = new();
-    
-    public PokemonPC(DAL dal)
+    private PokemonTeamService _pokemonTeamService;
+
+    public PokemonPC(DAL dal, PokemonTeamService pokemonTeamService)
     {
         InitializeComponent();
         Dal = dal;
+        _pokemonTeamService = pokemonTeamService;
     }
 
     private async void WindowLoaded(object sender, RoutedEventArgs e)
     {
+
         
         int pid = 1;
         PlayerPokemon p;
@@ -84,6 +88,11 @@ public partial class PokemonPC : Window
 
             j++;
         }
+    }
+
+    private void LoadPcPokemon()
+    {
+
     }
     
     private void BackClick(object sender, RoutedEventArgs e)
