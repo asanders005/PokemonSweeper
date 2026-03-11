@@ -21,34 +21,32 @@ namespace PokemonSweeper.Game.Field
     /// </summary>
     public partial class MainMenu : Window
     {
-        Data.DAL dal= new Data.DAL();
-        Game.PokemonModels.PokemonTeam team = null;
+        Data.DAL dal = new Data.DAL();
         public MainMenu()
         {
             InitializeComponent();
         }
-        public MainMenu(DAL dal, Game.PokemonModels.PokemonTeam team)
+        public MainMenu(DAL dal)
         {
             InitializeComponent();
             this.dal = dal;
-            this.team = team;
         }
 
         private void Easy_Click(object sender, RoutedEventArgs e)
-            {
-            
-            GameWindow game =new GameWindow(dal, new Services.PokemonTeamService(dal),"easy");
+        {
+
+            GameWindow game = new GameWindow(dal, new Services.PokemonTeamService(dal), "easy");
             game.Show();
             this.Close();
-            }
+        }
 
-            private void Meduim_Click(object sender, RoutedEventArgs e)
-            {
+        private void Meduim_Click(object sender, RoutedEventArgs e)
+        {
             Data.DAL dal = new Data.DAL();
             GameWindow game = new GameWindow(dal, new Services.PokemonTeamService(dal), "intermediate");
             game.Show();
             this.Close();
-            }
+        }
 
         private void Hard_Click(object sender, RoutedEventArgs e)
         {
@@ -64,5 +62,5 @@ namespace PokemonSweeper.Game.Field
             pc.Show();
         }
     }
-    }
+}
 

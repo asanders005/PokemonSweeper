@@ -161,7 +161,7 @@ namespace PokemonSweeper
                 if (battleResult.Item1)
                     BattleMessage.ShowMessage(window, Pokemon, battleResult.Item2);
                 else
-                    FailMessage.ShowMessage(window, Pokemon);
+                    FailMessage.ShowMessage(window, Pokemon, _d);
             }
             else if (Mines > 0)
             {
