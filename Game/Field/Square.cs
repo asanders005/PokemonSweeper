@@ -1,16 +1,18 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+﻿using PokemonSweeper.Data;
 using PokemonSweeper.Game.Messages;
-using System.Windows.Documents;
-using System.Collections.Generic;
 using PokemonSweeper.Game.PokemonModels;
 using PokemonSweeper.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-using PokemonSweeper.Data;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace PokemonSweeper
 {
@@ -88,9 +90,9 @@ namespace PokemonSweeper
             if (Status == SquareStatus.Open)
             {
                 Status = SquareStatus.Flagged;
-                Content = new Image {Source = new BitmapImage(new Uri("pack://application:,,,/images/pokeball.png"))};
-                FlaggedSquares = Field.Squares.Where( square => square.Status == SquareStatus.Flagged ).ToList();
-                sender.MinesLeftLabel( sender.Game.FieldLevel.Pokemon - FlaggedSquares.Count() );
+                Content = new Image { Source = new BitmapImage(new Uri("pack://application:,,,/images/pokeball.png")) };
+                FlaggedSquares = Field.Squares.Where(square => square.Status == SquareStatus.Flagged || square.Status == SquareStatus.Pokemon).ToList();
+                sender.MinesLeftLabel(sender.Game.FieldLevel.Pokemon - FlaggedSquares.Count());
                 if (FlaggedSquares.Count() == sender.Game.FieldLevel.Pokemon)
                 {
                     var win = true;
@@ -110,8 +112,8 @@ namespace PokemonSweeper
                 Content = "?";
                 Foreground = Brushes.Blue;
                 FontWeight = FontWeights.Bold;
-                FlaggedSquares = Field.Squares.Where( square => square.Status == SquareStatus.Flagged ).ToList();
-                sender.MinesLeftLabel( sender.Game.FieldLevel.Pokemon - FlaggedSquares.Count() );
+                FlaggedSquares = Field.Squares.Where(square => square.Status == SquareStatus.Flagged || square.Status == SquareStatus.Pokemon).ToList();
+                sender.MinesLeftLabel(sender.Game.FieldLevel.Pokemon - FlaggedSquares.Count());
             }
             else
             {
@@ -120,7 +122,7 @@ namespace PokemonSweeper
                 Foreground = Brushes.Gray;
                 FontWeight = FontWeights.Normal;
             }
-            
+
         }
 
         public async void LeftButton(GameWindow window)
@@ -138,19 +140,32 @@ namespace PokemonSweeper
 
         public async Task SwipeSquare(GameWindow window)
         {
-            Field.NrOfClicks++;
-            if (Field.NrOfClicks == 1)
+            if (Field.NrOfClicks < 1)
             {
-                if (Pokemon != null)
+                Field.NrOfClicks++;
+
+                Pokemon = null;
+                var squaresList = Field.Squares.Where
+                    (s => (s.Row >= Row - 1) && (s.Row <= Row + 1) &&
+                          (s.Column >= Column - 1) && (s.Column <= Column + 1))
+                    .ToList();
+                foreach (var Square in squaresList)
                 {
-                    await window.Game.NewField(window);
-                    await SwipeSquare(window);
+                    if (Square.Pokemon != null)
+                    {
+                        Square.Pokemon = null;
+                    }
                 }
+                foreach (var Square in squaresList)
+                {
+                    await Square.SwipeSquare(window);
+                }
+                return;
             }
 
             if (Pokemon != null)
             {
-                Content = new Image {Source = new BitmapImage(new Uri(Pokemon.SpriteUrl))};
+                Content = new Image { Source = new BitmapImage(new Uri(Pokemon.SpriteUrl)) };
                 Status = SquareStatus.Pokemon;
                 Background = Brushes.Red;
                 BorderBrush = Brushes.Red;
@@ -160,7 +175,12 @@ namespace PokemonSweeper
 
                 // If player wins, show battle result, otherwise show fail message
                 if (battleResult.Item1)
+                {
                     BattleMessage.ShowMessage(window, Pokemon, battleResult.Item2);
+
+                    var FlaggedSquares = Field.Squares.Where(square => square.Status == SquareStatus.Flagged || (square.Status == SquareStatus.Pokemon)).ToList();
+                    window.MinesLeftLabel(window.Game.FieldLevel.Pokemon - FlaggedSquares.Count());
+                }
                 else
                     FailMessage.ShowMessage(window, Pokemon, _d, _pokemonTeamService);
             }
@@ -183,7 +203,7 @@ namespace PokemonSweeper
                     (s => (s.Row >= Row - 1) && (s.Row <= Row + 1) &&
                           (s.Column >= Column - 1) && (s.Column <= Column + 1) && (s.Status == SquareStatus.Open))
                     .ToList()))
-                await OtherSquare.SwipeSquare(window);
+                    await OtherSquare.SwipeSquare(window);
             }
         }
     }
