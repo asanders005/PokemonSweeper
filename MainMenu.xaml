@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
         <Label VerticalAlignment="Center" HorizontalAlignment="Center">Welcome To PokeSweeper</Label>
         <Button x:Name="Easy" Content="Easy" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Easy_Click" Grid.Row="1" Width="100" ></Button>
-        <Button x:Name="Meduim" Content="Intermediate" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Meduim_Click" Grid.Row="1" Width="100" Margin="0 0 0 10"></Button>
+        <Button x:Name="Medium" Content="Intermediate" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Medium_Click" Grid.Row="1" Width="100" Margin="0 0 0 10"></Button>
         <Button x:Name="Hard" Content="Hard" HorizontalAlignment="Center" VerticalAlignment="Top" Click="Hard_Click" Grid.Row="1" Width="100" Margin="0 70 0 0"></Button>
         <Button x:Name="Box" Content="Box" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Box_Click" Grid.Row="2" Width="100" ></Button>
     </Grid>
