@@ -101,7 +101,7 @@ namespace PokemonSweeper
                             win = false;
                         }
                     }
-                    if (win) Score.ShowScore(sender, Field, _pokemonTeamService.CurrentTeam, _d);
+                    if (win) Score.ShowScore(sender, Field, _pokemonTeamService, _d);
                 }
             }
             else if (Status == SquareStatus.Flagged)
@@ -131,7 +131,7 @@ namespace PokemonSweeper
                 if (Field.ClearedSquares + window.Game.FieldLevel.Pokemon ==
                     window.Game.FieldLevel.Dimention)
                 {
-                    Score.ShowScore(window, Field, _pokemonTeamService.CurrentTeam, _d);
+                    Score.ShowScore(window, Field, _pokemonTeamService, _d);
                 }
             }
         }
@@ -162,7 +162,7 @@ namespace PokemonSweeper
                 if (battleResult.Item1)
                     BattleMessage.ShowMessage(window, Pokemon, battleResult.Item2);
                 else
-                    FailMessage.ShowMessage(window, Pokemon, _d);
+                    FailMessage.ShowMessage(window, Pokemon, _d, _pokemonTeamService);
             }
             else if (Mines > 0)
             {
