@@ -85,7 +85,6 @@ namespace PokemonSweeper.Game.Messages
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
             await SavePokemon();
-
             MainMenu main=new MainMenu(_dal,_team);
             main.Show();
             Close();

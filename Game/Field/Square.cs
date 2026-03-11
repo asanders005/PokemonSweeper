@@ -139,6 +139,14 @@ namespace PokemonSweeper
         public async Task SwipeSquare(GameWindow window)
         {
             Field.NrOfClicks++;
+            if (Field.NrOfClicks == 1)
+            {
+                if (Pokemon != null)
+                {
+                    await window.Game.NewField(window);
+                    await SwipeSquare(window);
+                }
+            }
             if (Pokemon != null)
             {
                 Content = new Image {Source = new BitmapImage(new Uri(Pokemon.SpriteUrl))};
