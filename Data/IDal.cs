@@ -9,8 +9,6 @@ namespace PokemonSweeper.Data
 {
     public interface IDal
     {
-        private static int playerPokemonCounter;  // This will be used to assign unique IDs to PlayerPokemon instances
-
         public Dictionary<int, string> PokemonMasterList { get; }
 
         public Task SavePlayerPokemonAsync(PlayerPokemon playerPokemon);
