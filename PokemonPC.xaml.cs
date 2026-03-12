@@ -52,7 +52,7 @@ public partial class PokemonPC : Window
                 Content = grid
             };
             string pokemonname = pokemon != null ? char.ToUpper(pokemon.Pokemon.Name[0]) + pokemon.Pokemon.Name[1..] : "None";
-            ImageSource pokemonimage = pokemon != null ?  new BitmapImage(new Uri(pokemon.Pokemon.DefaultSprite)) : null;
+            ImageSource pokemonimage = pokemon != null ?  new BitmapImage(new Uri(pokemon.SpriteUrl)) : null;
 
             Label label = new()
             {
@@ -144,7 +144,7 @@ public partial class PokemonPC : Window
             };
             Image image = new Image()
             {
-                Source = new BitmapImage(new Uri(pokemon.Pokemon.DefaultSprite)),
+                Source = new BitmapImage(new Uri(pokemon.SpriteUrl)),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Width = 50
             };
