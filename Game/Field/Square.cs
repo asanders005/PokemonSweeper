@@ -149,6 +149,8 @@ namespace PokemonSweeper
                 }
                 return;
             }
+            else
+                Field.NrOfClicks++;
 
             if (Pokemon != null)
             {
