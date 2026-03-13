@@ -66,7 +66,7 @@ namespace PokemonSweeper
             {
                 0 => 0,
                 1 => 350,
-                2 => 500,
+                2 => 450,
                 _ => throw new ArgumentOutOfRangeException(nameof(_level), "Level must be between 0 and 2.")
             };
 
